@@ -1,5 +1,6 @@
 const express = require("express");
 const { connectToDatabase } = require("./utils/db");
+const ChatBotRounter = require("./routes/chatbox");
 require("dotenv").config();
 const app = express();
 app.use((req, res, next) => {
@@ -16,6 +17,9 @@ app.use(express.json());
 connectToDatabase();
 
 //Passport-jwt setup
+
+//Routes
+app.use("/chatbot", ChatBotRounter);
 
 app.listen(port, () => {
   console.log(`server is running on ${port}`);
