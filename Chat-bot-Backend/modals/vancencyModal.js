@@ -11,7 +11,12 @@ const vancencySchema = new mongoose.Schema({
   },
   selectedTech: {
     type: String,
-    required: true,
+  },
+  yearExp: {
+    type: String,
+  },
+  traning: {
+    type: String,
   },
 });
 const InterviewModal = mongoose.model("Interviewer", vancencySchema);

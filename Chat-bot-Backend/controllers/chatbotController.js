@@ -1,7 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 const InterviewModal = require("../modals/vancencyModal");
-const { nextQuestions, threeQuestions } = require("../utils/utils");
+const {
+  nextQuestions,
+  threeQuestions,
+  ForthQuestions,
+} = require("../utils/utils");
+const { sendMail } = require("../middleware/emailSend/emailSend");
 // Construct the file path to Questions.json
 const filePath = path.join(__dirname, "../utils/Questions.json");
 // Read predefined questions from JSON file
@@ -75,10 +80,52 @@ const threeQuestion = async (req, res) => {
     res.status(500).json({ status: false, error: "Internal Server Error" });
   }
 };
+const fourthQuestion = async (req, res) => {
+  try {
+    const { email, yearExp } = req.body;
+    await InterviewModal.updateOne({ email }, { $set: { yearExp } });
+    if (yearExp == "Fresher") {
+      res.status(200).json({
+        status: true,
+        nextQuestion: ForthQuestions,
+      });
+    }
+    const sendEmail = "aman.dhiman@ensuesoft.com";
+    await sendMail(email, phoneNumber, sendEmail, res);
+    res.status(200).json({
+      status: true,
+      message:
+        "Thank you for your time. Our HR team will be in touch with you shortly.",
+    });
+  } catch (error) {
+    // Handle errors
+    // console.error("Error getting predefined questions:", error);
+    res.status(500).json({ status: false, error: "Internal Server Error" });
+  }
+};
+const fifthQuestion = async (req, res) => {
+  try {
+    const { email, traning, phoneNumber } = req.body;
+    await InterviewModal.updateOne({ email }, { $set: { traning } });
+    const sendEmail = "aman.dhiman@ensuesoft.com";
+    await sendMail(email, phoneNumber, sendEmail, res);
+    res.status(200).json({
+      status: true,
+      message:
+        "Thank you for your time. Our HR team will be in touch with you shortly.",
+    });
+  } catch (error) {
+    // Handle errors
+    // console.error("Error getting predefined questions:", error);
+    res.status(500).json({ status: false, error: "Internal Server Error" });
+  }
+};
 
 module.exports = {
   getPredefinedQuestions,
   findQuestion,
   secondQuestion,
   threeQuestion,
+  fourthQuestion,
+  fifthQuestion,
 };

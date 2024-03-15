@@ -17,3 +17,9 @@ exports.threeQuestions = {
     anwser: ["Fresher", "1 Year", "2 Year", "Above 2 year"],
   },
 };
+exports.ForthQuestions = {
+  subQuestion: {
+    question: "Have you completed any training relevant to this position?",
+    anwser: ["yes", "no"],
+  },
+};
