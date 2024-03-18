@@ -84,6 +84,7 @@ const fourthQuestion = async (req, res) => {
   try {
     const { email, yearExp } = req.body;
     await InterviewModal.updateOne({ email }, { $set: { yearExp } });
+    const userInfo = await InterviewModal.findOne({ email: email });
     if (yearExp == "Fresher") {
       res.status(200).json({
         status: true,
@@ -91,7 +92,7 @@ const fourthQuestion = async (req, res) => {
       });
     }
     const sendEmail = "aman.dhiman@ensuesoft.com";
-    await sendMail(email, phoneNumber, sendEmail, res);
+    await sendMail(email, userInfo.phoneNumber, sendEmail, res);
     res.status(200).json({
       status: true,
       message:
@@ -105,10 +106,11 @@ const fourthQuestion = async (req, res) => {
 };
 const fifthQuestion = async (req, res) => {
   try {
-    const { email, traning, phoneNumber } = req.body;
+    const { email, traning } = req.body;
     await InterviewModal.updateOne({ email }, { $set: { traning } });
     const sendEmail = "aman.dhiman@ensuesoft.com";
-    await sendMail(email, phoneNumber, sendEmail, res);
+    const userInfo = await InterviewModal.findOne({ email: email });
+    await sendMail(email, userInfo.phoneNumber, sendEmail, res);
     res.status(200).json({
       status: true,
       message:
