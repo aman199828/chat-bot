@@ -1,26 +1,26 @@
 [
   {
     "id": 1,
-    "question1": "I have question about vancency"
+    "question": "I have question about vancency"
   },
   {
     "id": 2,
-    "question2": "I have question about my invoice "
+    "question": "I have question about my invoice "
   },
   {
     "id": 3,
-    "question3": "I have question about support"
+    "question": "I have question about support"
   },
   {
     "id": 4,
-    "question4": "I am developer trying to learn more "
+    "question": "I am developer trying to learn more "
   },
   {
     "id": 5,
-    "question5": "I have question about designing"
+    "question": "I have question about designing"
   },
   {
     "id": 6,
-    "question6": "Something else"
+    "question": "Something else"
   }
 ]

@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { vacancyReducer } from "./reducers/vancencySlice";
 
 export const store = configureStore({
   reducer: {
-    // register: registerSlice,
-    // login: loginSlice,
+    vacancy: vacancyReducer,
   },
 });
 

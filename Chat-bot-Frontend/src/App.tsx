@@ -1,14 +1,14 @@
-import { Provider } from "react-redux";
-import { store } from "./redux/store";
-
-// import { decryptData } from "./utils/utils";
+import { useEffect } from "react";
+import { useAppDispatch } from "./redux/hooks";
+import { getAllQuestions } from "./redux/thunks/vacancy";
+import Bot from "./components/bot";
+import "./assets/bootstrap/bootstrap.min.css";
 function App() {
-  // const token = decryptData("token");
-  return (
-    <Provider store={store}>
-      <></>
-    </Provider>
-  );
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(getAllQuestions());
+  }, [dispatch]);
+  return <Bot />;
 }
 
 export default App;
