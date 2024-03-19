@@ -1,10 +1,19 @@
-import { useAppSelector } from "../../redux/hooks";
-import { selectAllQuestions } from "../../redux/reducers/vancencySlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import {
+  selectAllQuestions,
+  selectIsInputShow,
+  selectNextQuestion,
+} from "../../redux/reducers/vancencySlice";
+import { FirstQuestion } from "../../redux/thunks/vacancy";
+import InputFields from "../Inputs";
 
 function Bot() {
   const allQuestions = useAppSelector(selectAllQuestions);
+  const isInputShow = useAppSelector(selectIsInputShow);
+  const nextQustion = useAppSelector(selectNextQuestion);
+  const dispatch = useAppDispatch();
   const handleQuestionClick = (id: number) => {
-    console.log(id);
+    dispatch(FirstQuestion(id));
   };
 
   return (
@@ -32,38 +41,29 @@ function Bot() {
                 className="d-flex align-items-center justify-content-center px-4"
                 style={{ height: "60vh" }}
               >
-                <ul>
-                  {allQuestions &&
-                    allQuestions.map((question) => {
-                      return (
-                        <button
-                          key={question.id}
-                          onClick={() => handleQuestionClick(question.id)}
-                        >
-                          {question.question}
-                        </button>
-                      );
-                    })}
-                </ul>
+                {!isInputShow && (
+                  <ul>
+                    {allQuestions &&
+                      allQuestions.map((question) => {
+                        return (
+                          <button
+                            key={question.id}
+                            onClick={() => handleQuestionClick(question.id)}
+                          >
+                            {question.question}
+                          </button>
+                        );
+                      })}
+                  </ul>
+                )}
+                {isInputShow && (
+                  <>
+                    {nextQustion}
+                    <InputFields />
+                  </>
+                )}
               </div>
             </div>
-
-            {/* <div ref={lastResultRef}></div> */}
-            {/* <div className="border-0 px-4 py-2">
-              <div className="mb-3 w-100 d-flex justify-content-between border rounded-4 border-black px-3 py-2">
-                <input
-                  type="text"
-                  className="form-control shadow-none border-0 ps-0 fs-14"
-                  placeholder="Message ChatGPT...."
-                  value={""}
-                  //   onChange={(e) => setvalue(e.target.value)}
-                  // ref={buttonRef}
-                />
-                <button className="border-0">
-                  <img src="../static/img/chatgpt-send.svg" alt="" />
-                </button>
-              </div>
-            </div> */}
           </div>
         </div>
       }

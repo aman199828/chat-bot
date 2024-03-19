@@ -5,6 +5,12 @@ export interface Question {
 export interface VacancyState {
   isLoading: boolean;
   allQuestions: Question[];
+  isInputShow: boolean;
+  nextQuestion: string;
+}
+export interface SecondQuestionPayload {
+  email: string;
+  phoneNumber: Number;
 }
 
 export type Van = Question[];
