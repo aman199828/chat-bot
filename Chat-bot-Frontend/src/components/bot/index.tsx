@@ -1,6 +1,8 @@
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
   selectAllQuestions,
+  selectAnswer,
+  selectIsAllQuestionShow,
   selectIsInputShow,
   selectNextQuestion,
 } from "../../redux/reducers/vancencySlice";
@@ -9,11 +11,16 @@ import InputFields from "../Inputs";
 
 function Bot() {
   const allQuestions = useAppSelector(selectAllQuestions);
+  const allQuestionsShow = useAppSelector(selectIsAllQuestionShow);
+  const allAnswer = useAppSelector(selectAnswer);
   const isInputShow = useAppSelector(selectIsInputShow);
   const nextQustion = useAppSelector(selectNextQuestion);
   const dispatch = useAppDispatch();
   const handleQuestionClick = (id: number) => {
     dispatch(FirstQuestion(id));
+  };
+  const handleAnswerClick = (question: string) => {
+    console.log(question);
   };
 
   return (
@@ -41,7 +48,7 @@ function Bot() {
                 className="d-flex align-items-center justify-content-center px-4"
                 style={{ height: "60vh" }}
               >
-                {!isInputShow && (
+                {!isInputShow && !allQuestionsShow && (
                   <ul>
                     {allQuestions &&
                       allQuestions.map((question) => {
@@ -56,12 +63,25 @@ function Bot() {
                       })}
                   </ul>
                 )}
+                {nextQustion && nextQustion}
                 {isInputShow && (
                   <>
-                    {nextQustion}
                     <InputFields />
                   </>
                 )}
+                <ul>
+                  {allAnswer &&
+                    allAnswer.map((question, index) => {
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => handleAnswerClick(question)}
+                        >
+                          {question}
+                        </button>
+                      );
+                    })}
+                </ul>
               </div>
             </div>
           </div>

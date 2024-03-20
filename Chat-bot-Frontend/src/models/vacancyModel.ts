@@ -7,6 +7,8 @@ export interface VacancyState {
   allQuestions: Question[];
   isInputShow: boolean;
   nextQuestion: string;
+  answer: [];
+  isAllQuestionShow: boolean;
 }
 export interface SecondQuestionPayload {
   email: string;
