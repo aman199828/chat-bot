@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-exports.sendMail = async (email, sendEmail, phoneNumber, res) => {
+exports.sendMailMiddleware = async (email, sendEmail, phoneNumber, res) => {
   try {
     let transporter = nodemailer.createTransport({
       service: "gmail",

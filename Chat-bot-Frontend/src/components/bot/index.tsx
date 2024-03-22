@@ -1,40 +1,72 @@
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
   selectAllQuestions,
   selectAnswer,
+  selectFourthQuestion,
   selectIsAllQuestionShow,
   selectIsInputShow,
   selectNextQuestion,
+  selectThirdQuestion,
 } from "../../redux/reducers/vancencySlice";
-import { FirstQuestion } from "../../redux/thunks/vacancy";
+import {
+  FifthQuestion,
+  FirstQuestion,
+  FourthQuestion,
+  ThirdQuestion,
+} from "../../redux/thunks/vacancy";
 import InputFields from "../Inputs";
-
+import image from "../../assets/chat-bot.png";
+import image1 from "../../assets/ensuesoft-logo.svg";
 function Bot() {
+  const [isShowGptBox, setIsShowGptBox] = useState(false);
   const allQuestions = useAppSelector(selectAllQuestions);
   const allQuestionsShow = useAppSelector(selectIsAllQuestionShow);
   const allAnswer = useAppSelector(selectAnswer);
+  const isThirdQuestion = useAppSelector(selectThirdQuestion);
+  const isFourthQuestion = useAppSelector(selectFourthQuestion);
   const isInputShow = useAppSelector(selectIsInputShow);
   const nextQustion = useAppSelector(selectNextQuestion);
   const dispatch = useAppDispatch();
   const handleQuestionClick = (id: number) => {
     dispatch(FirstQuestion(id));
   };
-  const handleAnswerClick = (question: string) => {
-    console.log(question);
+  const handleAnswerClick = (selectedAnswer: string) => {
+    if (isFourthQuestion) {
+      console.log(selectedAnswer);
+      const payload = {
+        email: "aman.dhiman@ensuesoft.com",
+        traning: selectedAnswer,
+      };
+      dispatch(FifthQuestion(payload));
+    } else if (isThirdQuestion) {
+      const payload = {
+        email: "aman.dhiman@ensuesoft.com",
+        yearExp: selectedAnswer,
+      };
+      dispatch(FourthQuestion(payload));
+    } else {
+      const payload = {
+        email: "aman.dhiman@ensuesoft.com",
+        selectedTech: selectedAnswer,
+      };
+      dispatch(ThirdQuestion(payload));
+    }
   };
 
   return (
     <div>
-      {
+      {isShowGptBox ? (
         <div className="chatbot-content" style={{ width: "30%" }}>
           <div className="w-100 bg-white border rounded-4">
             <div className="d-flex justify-content-between primary-bg rounded-4 rounded-bottom-0 py-3 px-4">
-              <img src="../static/img/white-chatgpt.svg" alt="..." />
-              <div data-bs-theme="dark">
+              <img src={image1} alt="..." className="img-fluid logo-img" />
+              <div>
                 <button
                   type="button"
-                  className="btn-close me-0 shadow-none opacity-100"
+                  className="btn-close me-0  opacity-100"
                   id="chatbot-closeBtn"
+                  onClick={() => setIsShowGptBox(false)}
                 ></button>
               </div>
             </div>
@@ -54,6 +86,7 @@ function Bot() {
                       allQuestions.map((question) => {
                         return (
                           <button
+                            className="btn btn-primary my-1 w-100"
                             key={question.id}
                             onClick={() => handleQuestionClick(question.id)}
                           >
@@ -86,24 +119,18 @@ function Bot() {
             </div>
           </div>
         </div>
-      }
+      ) : (
+        <button
+          type="button"
+          className="btn btn-primary rounded-circle  chatbot shadow-none "
+          id="scroll-to-bottom"
+          onClick={() => setIsShowGptBox(!isShowGptBox)}
+        >
+          <img src={image} alt="..." className="img-fluid " />
+        </button>
+      )}
     </div>
   );
 }
 
 export default Bot;
-
-// (
-//     <button
-//       type="button"
-//       className="btn btn-primary rounded-circle p-3 chatbot shadow-none"
-//       id="scroll-to-bottom"
-//       //   onClick={() => setIsShowGptBox(!isShowGptBox)}
-//     >
-//       <img
-//         src="../static/img/chatbot-msgIcon.svg"
-//         alt="..."
-//         className="img-fluid"
-//       />
-//     </button>
-//   )

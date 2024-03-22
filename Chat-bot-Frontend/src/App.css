@@ -40,3 +40,30 @@
 .read-the-docs {
   color: #888;
 }
+.chatbot {
+  position: fixed;
+  right: 2%;
+  top: 130px;
+  z-index: 9;
+  height: 120px;
+  width: 120px;
+}
+.logo-img {
+  width: 40%;
+}
+.chatbot-content {
+  position: fixed;
+  right: 5%;
+  top: 12%;
+  z-index: 10;
+}
+#chatbot-closeBtn {
+  width: 35px;
+  height: 35px;
+  margin-top: 7px;
+}
+
+.rounded-chatgpt {
+  border-radius: 20px;
+  border-bottom-left-radius: 0;
+}

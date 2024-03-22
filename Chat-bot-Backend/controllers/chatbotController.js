@@ -4,9 +4,9 @@ const InterviewModal = require("../modals/vancencyModal");
 const {
   nextQuestions,
   threeQuestions,
-  ForthQuestions,
+  FourthQuestions,
 } = require("../utils/utils");
-const { sendMail } = require("../middleware/emailSend/emailSend");
+const { sendMailMiddleware } = require("../middleware/emailSend/emailSend");
 // Construct the file path to Questions.json
 const filePath = path.join(__dirname, "../utils/Questions.json");
 // Read predefined questions from JSON file
@@ -69,7 +69,10 @@ const threeQuestion = async (req, res) => {
   try {
     const { email, selectedTech } = req.body;
 
-    await InterviewModal.updateOne({ email }, { $set: { selectedTech } });
+    await InterviewModal.updateOne(
+      { email: email },
+      { $set: { selectedTech: selectedTech } }
+    );
     res.status(200).json({
       status: true,
       nextQuestion: threeQuestions,
@@ -83,16 +86,19 @@ const threeQuestion = async (req, res) => {
 const fourthQuestion = async (req, res) => {
   try {
     const { email, yearExp } = req.body;
-    await InterviewModal.updateOne({ email }, { $set: { yearExp } });
+    await InterviewModal.updateOne(
+      { email: email },
+      { $set: { yearExp: yearExp } }
+    );
     const userInfo = await InterviewModal.findOne({ email: email });
     if (yearExp == "Fresher") {
       res.status(200).json({
         status: true,
-        nextQuestion: ForthQuestions,
+        nextQuestion: FourthQuestions,
       });
     }
     const sendEmail = "aman.dhiman@ensuesoft.com";
-    await sendMail(email, userInfo.phoneNumber, sendEmail, res);
+    await sendMailMiddleware(email, sendEmail, userInfo.phoneNumber, res);
     res.status(200).json({
       status: true,
       message:
@@ -107,10 +113,15 @@ const fourthQuestion = async (req, res) => {
 const fifthQuestion = async (req, res) => {
   try {
     const { email, traning } = req.body;
-    await InterviewModal.updateOne({ email }, { $set: { traning } });
-    const sendEmail = "aman.dhiman@ensuesoft.com";
+
+    await InterviewModal.updateOne(
+      { email: email },
+      { $set: { traning: traning } }
+    );
+
     const userInfo = await InterviewModal.findOne({ email: email });
-    await sendMail(email, userInfo.phoneNumber, sendEmail, res);
+    const sendEmail = "aman.dhiman@ensuesoft.com";
+    await sendMailMiddleware(email, sendEmail, userInfo.phoneNumber, res);
     res.status(200).json({
       status: true,
       message:
