@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { VacancyState, Van } from "../../models/vacancyModel";
+import { VacancyState } from "../../models/vacancyModel";
 import {
   FifthQuestion,
   FirstQuestion,
@@ -9,32 +9,37 @@ import {
   getAllQuestions,
 } from "../thunks/vacancy";
 import { RootState } from "../store";
+import { updateStateIfDifferent } from "../../utils/utils";
 
 const initialState: VacancyState = {
   isLoading: false,
   allQuestions: [],
-  answer: [],
   isInputShow: false,
-  nextQuestion: "",
-  isAllQuestionShow: false,
   thirdQuestion: false,
   fourthQuestion: false,
+  fifthQuestion: false,
   chatBotDataOutput: {},
   previousChat: [],
+  isQuestionShow: false,
+  isSuccess: false,
 };
 const vacancySlice = createSlice({
   name: "vacancy",
   initialState,
-  reducers: {},
+  reducers: {
+    updatePreviousChat: (state, action) => {
+      state.previousChat.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllQuestions.pending, (state) => {
       state.isLoading = true;
     });
     builder.addCase(
       getAllQuestions.fulfilled,
-      (state, action: PayloadAction<Van>) => {
+      (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        state.allQuestions = action.payload;
+        state.allQuestions = action.payload.data;
       }
     );
     builder.addCase(getAllQuestions.rejected, (state) => {
@@ -46,10 +51,13 @@ const vacancySlice = createSlice({
     builder.addCase(
       FirstQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
+        updateStateIfDifferent(
+          state,
+          action.payload.question,
+          state.chatBotDataOutput
+        );
         state.isLoading = false;
-        state.nextQuestion = action.payload.message;
         state.isInputShow = action.payload.showInput;
-        state.isAllQuestionShow = true;
       }
     );
     builder.addCase(FirstQuestion.rejected, (state) => {
@@ -62,9 +70,14 @@ const vacancySlice = createSlice({
       SecondQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        state.nextQuestion = action.payload.nextQuestion.subQuestion.question;
+        state.allQuestions = action.payload.nextQuestion.answer;
+        updateStateIfDifferent(
+          state,
+          action.payload.nextQuestion.question,
+          state.chatBotDataOutput
+        );
         state.isInputShow = false;
-        state.answer = action.payload.nextQuestion.subQuestion.answer;
+        state.thirdQuestion = true;
       }
     );
     builder.addCase(SecondQuestion.rejected, (state) => {
@@ -77,10 +90,14 @@ const vacancySlice = createSlice({
       ThirdQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        state.nextQuestion = action.payload.nextQuestion.subQuestion.question;
+        updateStateIfDifferent(
+          state,
+          action.payload.nextQuestion.question,
+          state.chatBotDataOutput
+        );
+        state.allQuestions = action.payload.nextQuestion.answer;
         state.isInputShow = false;
-        state.thirdQuestion = true;
-        state.answer = action.payload.nextQuestion.subQuestion.answer;
+        state.fourthQuestion = true;
       }
     );
     builder.addCase(ThirdQuestion.rejected, (state) => {
@@ -93,11 +110,15 @@ const vacancySlice = createSlice({
       FourthQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        state.nextQuestion = action.payload.nextQuestion.subQuestion.question;
+        updateStateIfDifferent(
+          state,
+          action.payload.nextQuestion.question,
+          state.chatBotDataOutput
+        );
+        state.allQuestions = action.payload.nextQuestion.answer;
         state.isInputShow = false;
         state.thirdQuestion = false;
-        state.fourthQuestion = true;
-        state.answer = action.payload.nextQuestion.subQuestion.answer;
+        state.fifthQuestion = true;
       }
     );
     builder.addCase(FourthQuestion.rejected, (state) => {
@@ -110,11 +131,16 @@ const vacancySlice = createSlice({
       FifthQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        state.nextQuestion = action.payload.message;
+        updateStateIfDifferent(
+          state,
+          action.payload.message,
+          state.chatBotDataOutput
+        );
         state.isInputShow = false;
         state.thirdQuestion = false;
         state.fourthQuestion = false;
-        state.answer = [];
+        state.fifthQuestion = false;
+        state.isQuestionShow = true;
       }
     );
     builder.addCase(FifthQuestion.rejected, (state) => {
@@ -122,17 +148,15 @@ const vacancySlice = createSlice({
     });
   },
 });
+export const vacancyActions = vacancySlice.actions;
 export const selectAllQuestions = (state: RootState) => {
   return state.vacancy.allQuestions;
-};
-export const selectAnswer = (state: RootState) => {
-  return state.vacancy.answer;
 };
 export const selectIsInputShow = (state: RootState) => {
   return state.vacancy.isInputShow;
 };
-export const selectIsAllQuestionShow = (state: RootState) => {
-  return state.vacancy.isAllQuestionShow;
+export const selectIsLoading = (state: RootState) => {
+  return state.vacancy.isLoading;
 };
 export const selectThirdQuestion = (state: RootState) => {
   return state.vacancy.thirdQuestion;
@@ -140,8 +164,17 @@ export const selectThirdQuestion = (state: RootState) => {
 export const selectFourthQuestion = (state: RootState) => {
   return state.vacancy.fourthQuestion;
 };
-export const selectNextQuestion = (state: RootState) => {
-  return state.vacancy.nextQuestion;
+export const selectFifthQuestion = (state: RootState) => {
+  return state.vacancy.fifthQuestion;
+};
+export const selectIsQuestionShow = (state: RootState) => {
+  return state.vacancy.isQuestionShow;
+};
+export const selectPreviousChat = (state: RootState) => {
+  return state.vacancy.previousChat;
+};
+export const selectIsSuccess = (state: RootState) => {
+  return state.vacancy.isSuccess;
 };
 
 export const vacancyReducer = vacancySlice.reducer;

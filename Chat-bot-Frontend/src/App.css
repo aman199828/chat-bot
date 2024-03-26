@@ -54,7 +54,7 @@
 .chatbot-content {
   position: fixed;
   right: 5%;
-  top: 12%;
+  top: 5%;
   z-index: 10;
 }
 #chatbot-closeBtn {
@@ -66,4 +66,20 @@
 .rounded-chatgpt {
   border-radius: 20px;
   border-bottom-left-radius: 0;
+}
+
+.rounded-userMsg {
+  border-radius: 20px;
+  border-bottom-right-radius: 0;
+}
+.copy-code {
+  display: none;
+  width: 17px;
+  cursor: pointer;
+}
+.bg-gray {
+  background-color: #e8e8e8;
+}
+.h-60 {
+  height: 60vh;
 }

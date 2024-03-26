@@ -20,11 +20,42 @@ export default function InputFields() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <label>First Name</label>
-      <input {...register("email")} />
-      <label>First Name</label>
-      <input {...register("phoneNumber")} />
-      <input type="submit" />
+      <div className="form-row align-items-center">
+        <div className="col-auto">
+          <label className="sr-only" htmlFor="inlineFormInput">
+            Phone Number
+          </label>
+          <input
+            type="text"
+            className="form-control mb-2"
+            id="inlineFormInput"
+            placeholder="Jane Doe"
+            {...register("phoneNumber")}
+          />
+        </div>
+        <div className="col-auto">
+          <label className="sr-only" htmlFor="inlineFormInputGroup">
+            Email
+          </label>
+          <div className="input-group mb-2">
+            <div className="input-group-prepend">
+              <div className="input-group-text">@</div>
+            </div>
+            <input
+              type="text"
+              className="form-control"
+              id="inlineFormInputGroup"
+              placeholder="Username"
+              {...register("email")}
+            />
+          </div>
+        </div>
+        <div className="col-auto">
+          <button type="submit" className="btn btn-primary mb-2">
+            Submit
+          </button>
+        </div>
+      </div>
     </form>
   );
 }

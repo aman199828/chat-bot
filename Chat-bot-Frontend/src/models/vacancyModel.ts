@@ -1,18 +1,21 @@
 export interface Question {
-  id: number;
   question: string;
 }
 export interface VacancyState {
   isLoading: boolean;
-  allQuestions: Question[];
+  allQuestions: [];
   isInputShow: boolean;
-  nextQuestion: string;
-  isAllQuestionShow: boolean;
   thirdQuestion: boolean;
   fourthQuestion: boolean;
-  previousChat: [];
-  answer: [];
+  fifthQuestion: boolean;
+  previousChat: {
+    role: string;
+    content: string;
+    date: string;
+  }[];
   chatBotDataOutput: {};
+  isQuestionShow: boolean;
+  isSuccess: boolean;
 }
 export interface SecondQuestionPayload {
   email: string;
@@ -31,9 +34,7 @@ export interface FifthQuestionPayload {
   traning: string;
 }
 
-export type Van = Question[];
+export type Van = [];
 export interface VacancyAllQuestionResponse {
-  data: {
-    data: Question[];
-  };
+  data: [];
 }

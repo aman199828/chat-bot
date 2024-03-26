@@ -14,9 +14,9 @@ export const getAllQuestions = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response: VacancyAllQuestionResponse = await axios(
-        "http://localhost:3030/chatbot/first-question"
+        "http://localhost:3030/chatbot/preDefine-question"
       );
-      return response.data.data;
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -24,11 +24,11 @@ export const getAllQuestions = createAsyncThunk(
 );
 export const FirstQuestion = createAsyncThunk(
   "api/FirstQuestion",
-  async (questionId: number, thunkAPI) => {
+  async (selectedAnswer: string, thunkAPI) => {
     try {
       const response: VacancyAllQuestionResponse = await axios.post(
         "http://localhost:3030/chatbot/first-question",
-        questionId
+        selectedAnswer
       );
       return response.data;
     } catch (error: any) {
