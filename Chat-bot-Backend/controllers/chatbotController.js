@@ -20,12 +20,62 @@ const getPredefinedQuestions = async (req, res) => {
 };
 
 const firstQuestion = async (req, res) => {
+  const { selectedAnswer } = req.body;
   try {
-    return res.status(200).json({
-      status: true,
-      showInput: true,
-      question: "Please provide your email and phone number to connect you",
-    });
+    let response;
+    switch (selectedAnswer) {
+      case "I have question about vancency":
+        response = {
+          status: true,
+          showInput: true,
+          question:
+            "Please provide your email and phone number regarding the vacancy.",
+        };
+        break;
+      case "I have question about my invoice":
+        response = {
+          status: true,
+          showInput: true,
+          question:
+            "Please provide your invoice details so we can assist you better.",
+        };
+        break;
+      case "I have question about support":
+        response = {
+          status: true,
+          showInput: true,
+          question: "Please describe your support issue in detail.",
+        };
+        break;
+      case "I am developer trying to learn more":
+        response = {
+          status: true,
+          showInput: true,
+          question:
+            "What specific topics are you interested in learning about?",
+        };
+        break;
+      case "I have question about designing":
+        response = {
+          status: true,
+          showInput: true,
+          question: "Please specify the design-related query you have.",
+        };
+        break;
+      case "Something else":
+        response = {
+          status: true,
+          showInput: true,
+          question: "Please provide details about your query.",
+        };
+        break;
+      default:
+        response = {
+          status: false,
+          error: "Invalid selection",
+        };
+    }
+    return res.status(200).json(response);
   } catch (error) {
     // Handle errors
     // console.error("Error getting predefined questions:", error);

@@ -3,6 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import {
   FifthQuestionPayload,
+  FirstQuestionPayload,
   FourthQuestionPayload,
   SecondQuestionPayload,
   ThirdQuestionPayload,
@@ -24,11 +25,11 @@ export const getAllQuestions = createAsyncThunk(
 );
 export const FirstQuestion = createAsyncThunk(
   "api/FirstQuestion",
-  async (selectedAnswer: string, thunkAPI) => {
+  async (payload: FirstQuestionPayload, thunkAPI) => {
     try {
       const response: VacancyAllQuestionResponse = await axios.post(
         "http://localhost:3030/chatbot/first-question",
-        selectedAnswer
+        payload
       );
       return response.data;
     } catch (error: any) {

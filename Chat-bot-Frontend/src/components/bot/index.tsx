@@ -17,6 +17,7 @@ import {
   FirstQuestion,
   FourthQuestion,
   ThirdQuestion,
+  getAllQuestions,
 } from "../../redux/thunks/vacancy";
 import InputFields from "../Inputs";
 import image from "../../assets/chat-bot.png";
@@ -24,6 +25,7 @@ import image1 from "../../assets/ensuesoft-logo.svg";
 
 function Bot() {
   const [isShowGptBox, setIsShowGptBox] = useState(false);
+  const [isStart, setIsStart] = useState(false);
   const lastResultRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isLoading = useAppSelector(selectIsLoading);
@@ -37,6 +39,12 @@ function Bot() {
   const previousChatData = useAppSelector(selectPreviousChat);
 
   const dispatch = useAppDispatch();
+  const handleGetStart = () => {
+    if (!isStart) {
+      setIsStart(true);
+      dispatch(getAllQuestions());
+    }
+  };
   const handleQuestionClick = (selectedAnswer: string) => {
     if (selectedAnswer) {
       const question = {
@@ -65,7 +73,10 @@ function Bot() {
         };
         dispatch(ThirdQuestion(payload));
       } else {
-        dispatch(FirstQuestion(selectedAnswer));
+        const payload = {
+          selectedAnswer: selectedAnswer,
+        };
+        dispatch(FirstQuestion(payload));
       }
     }
   };
@@ -105,7 +116,7 @@ function Bot() {
               </div>
             </div>
             <div
-              className={`px-4 py-3 d-flex flex-column gap-4 h-60 ${
+              className={`spy-3 d-flex flex-column gap-4 h-60 ${
                 previousChatData && previousChatData.length
                   ? "overflow-y-auto"
                   : ""
@@ -113,6 +124,33 @@ function Bot() {
               ref={messagesEndRef}
               id="prevChatData"
             >
+              <div className="d-flex align-items-end gap-3 m-1">
+                <img
+                  src="../static/logo.svg"
+                  alt="Logo"
+                  style={{ width: "60px" }}
+                />
+                <div className="bg-primary-subtle p-3 rounded-chatgpt w-75 ">
+                  <div className="d-flex align-items-center justify-content-between mb-1">
+                    <h6 className="mb-0 fs-14 fw-bold">EnsuesoftBot</h6>
+                    <img src={image} alt="..." className="copy-code chatbot" />
+                  </div>
+                  <p className="mb-0 fs-14 word-break text-start">
+                    Welcome to Ensuesoft. The trusted development partner of
+                    enterprises across the globe. Result-Oriented IT Services
+                    for your Business. Trust our designers and developers for
+                    tailor-made tech solutions.
+                  </p>
+                </div>
+              </div>
+              <div className="px-3 d-flex flex-column  align-items-end">
+                <button
+                  className={`btn btn-danger my-1 w-30 ${} `}
+                  onClick={() => handleGetStart()}
+                >
+                  👋Click to Start
+                </button>
+              </div>
               {previousChatData &&
                 previousChatData.map((chatData, index) => {
                   const isUser = chatData.role !== "EnsuesoftBot";
@@ -122,31 +160,43 @@ function Bot() {
 
                   return (
                     <React.Fragment key={index}>
-                      <div className={isUser ? "w-75 ms-auto" : "w-75"}>
-                        <div className={messageClass}>
-                          <div className="d-flex align-items-center justify-content-between mb-1">
-                            <h6 className="mb-0 fs-14 fw-bold">
-                              {chatData.role}
-                            </h6>
-                            {chatData.role === "EnsuesoftBot" && (
-                              <img
-                                src={image}
-                                alt="..."
-                                className="copy-code chatbot"
-                              />
-                            )}
+                      <div className="d-flex align-items-end gap-3 m-1">
+                        {chatData.role === "EnsuesoftBot" && (
+                          <img
+                            src="../static/logo.svg"
+                            alt="Logo"
+                            style={{ width: "60px" }}
+                          />
+                        )}
+                        <div
+                          className={
+                            isUser
+                              ? "w-75 ms-auto text-end "
+                              : "w-75 text-start"
+                          }
+                        >
+                          <div className={messageClass}>
+                            <div className="d-flex align-items-center justify-content-between mb-1">
+                              <h6
+                                className={`mb-0 fs-14 fw-bold ${
+                                  isUser ? "w-100 textend" : ""
+                                }`}
+                              >
+                                {chatData.role}
+                              </h6>
+                            </div>
+                            <p className="mb-0 fs-14 word-break ">
+                              {chatData.content}
+                            </p>
                           </div>
-                          <p className="mb-0 fs-14 word-break">
-                            {chatData.content}
+                          <p
+                            className="fs-12 text-end mt-1"
+                            id="page-bottom"
+                            ref={lastResultRef}
+                          >
+                            {chatData.date}
                           </p>
                         </div>
-                        <p
-                          className="fs-12 text-end mt-1"
-                          id="page-bottom"
-                          ref={lastResultRef}
-                        >
-                          {chatData.date}
-                        </p>
                       </div>
                     </React.Fragment>
                   );
@@ -164,15 +214,15 @@ function Bot() {
                   </div>
                 </div>
               ) : (
-                <div className="px-4 py-3 d-flex flex-column gap-4">
+                <div className="py-3 d-flex flex-column gap-4 align-items-end">
                   <div className="d-flex align-items-center justify-content-center px-4">
                     {!isInputShow && !isQuestionShow && (
-                      <ul>
+                      <ul className="d-flex flex-column">
                         {allQuestions &&
                           allQuestions.map((question, index) => {
                             return (
                               <button
-                                className="btn btn-primary my-1 w-100"
+                                className="btn btn-primary my-1 w-100 "
                                 key={index}
                                 onClick={() => handleQuestionClick(question)}
                               >

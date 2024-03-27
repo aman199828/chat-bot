@@ -21,6 +21,9 @@ export interface SecondQuestionPayload {
   email: string;
   phoneNumber: Number;
 }
+export interface FirstQuestionPayload {
+  selectedAnswer: string;
+}
 export interface ThirdQuestionPayload {
   email: string;
   selectedTech: string;
