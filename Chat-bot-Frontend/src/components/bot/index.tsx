@@ -18,10 +18,12 @@ import {
   FourthQuestion,
   ThirdQuestion,
   getAllQuestions,
+  getStarted,
 } from "../../redux/thunks/vacancy";
 import InputFields from "../Inputs";
 import image from "../../assets/chat-bot.png";
 import image1 from "../../assets/ensuesoft-logo.svg";
+import Loader from "../loader";
 
 function Bot() {
   const [isShowGptBox, setIsShowGptBox] = useState(false);
@@ -37,12 +39,49 @@ function Bot() {
   const isQuestionShow = useAppSelector(selectIsQuestionShow);
   const isInputShow = useAppSelector(selectIsInputShow);
   const previousChatData = useAppSelector(selectPreviousChat);
+  const [showLoaderMid, setShowLoaderMid] = useState(false);
+  const [showContent, setshowContent] = useState(false);
+  const [showMidLine, setShowMidLine] = useState(false);
+  const [showEndLine, setShowEndLine] = useState(false);
+  const [showloaderEnd, setShowLoadeEnd] = useState(false);
+
+  useEffect(() => {
+    if (isSuccess && !showContent) {
+      const contentTimeout = setTimeout(() => {
+        setshowContent(true);
+        setShowLoaderMid(true);
+      }, 3000);
+
+      return () => clearTimeout(contentTimeout);
+    }
+  }, [isSuccess, showContent]);
+
+  useEffect(() => {
+    if (showContent && !showMidLine) {
+      const midLineTimeout = setTimeout(() => {
+        setShowMidLine(true);
+        setShowLoadeEnd(true);
+      }, 3000);
+
+      return () => clearTimeout(midLineTimeout);
+    }
+  }, [showContent, showMidLine]);
+
+  useEffect(() => {
+    if (showMidLine && !showEndLine) {
+      const endLineTimeout = setTimeout(() => {
+        setShowEndLine(true);
+      }, 3000);
+
+      return () => clearTimeout(endLineTimeout);
+    }
+  }, [showMidLine, showEndLine]);
 
   const dispatch = useAppDispatch();
   const handleGetStart = () => {
     if (!isStart) {
       setIsStart(true);
-      dispatch(getAllQuestions());
+      dispatch(getStarted());
     }
   };
   const handleQuestionClick = (selectedAnswer: string) => {
@@ -95,7 +134,7 @@ function Bot() {
         handleScroll();
       }, 1000);
     }
-  }, [isSuccess, previousChatData]);
+  }, [isSuccess, previousChatData, showEndLine]);
   return (
     <div>
       {isShowGptBox ? (
@@ -145,7 +184,9 @@ function Bot() {
               </div>
               <div className="px-3 d-flex flex-column  align-items-end">
                 <button
-                  className={`btn btn-danger my-1 w-30 ${} `}
+                  className={`btn  my-1 w-30 ${
+                    isStart ? "btn-primary" : "btn-danger"
+                  } `}
                   onClick={() => handleGetStart()}
                 >
                   👋Click to Start
@@ -175,20 +216,43 @@ function Bot() {
                               : "w-75 text-start"
                           }
                         >
-                          <div className={messageClass}>
-                            <div className="d-flex align-items-center justify-content-between mb-1">
-                              <h6
-                                className={`mb-0 fs-14 fw-bold ${
-                                  isUser ? "w-100 textend" : ""
-                                }`}
-                              >
-                                {chatData.role}
-                              </h6>
+                          {showContent ? (
+                            <div className={messageClass}>
+                              <div className="d-flex align-items-center justify-content-between mb-1">
+                                <h6
+                                  className={`mb-0 fs-14 fw-bold ${
+                                    isUser ? "w-100 textend" : ""
+                                  }`}
+                                >
+                                  {chatData.role}
+                                </h6>
+                              </div>
+                              <p className="mb-0 fs-14 word-break ">
+                                {chatData.content}
+                              </p>
                             </div>
-                            <p className="mb-0 fs-14 word-break ">
-                              {chatData.content}
-                            </p>
-                          </div>
+                          ) : (
+                            <Loader />
+                          )}
+
+                          {showMidLine ? (
+                            <div className={`${messageClass} mt-2`}>
+                              <p className="mb-0 fs-14 word-break">
+                                {chatData.midLine}
+                              </p>
+                            </div>
+                          ) : (
+                            showLoaderMid && <Loader />
+                          )}
+                          {showEndLine ? (
+                            <div className={`${messageClass} mt-2`}>
+                              <p className="mb-0 fs-14 word-break">
+                                {chatData.endLine}
+                              </p>
+                            </div>
+                          ) : (
+                            showloaderEnd && <Loader />
+                          )}
                           <p
                             className="fs-12 text-end mt-1"
                             id="page-bottom"
@@ -198,21 +262,16 @@ function Bot() {
                           </p>
                         </div>
                       </div>
+                      {isInputShow && showEndLine && (
+                        <>
+                          <InputFields />
+                        </>
+                      )}
                     </React.Fragment>
                   );
                 })}
               {isLoading ? (
-                <div className="d-flex gap-2">
-                  <div className="spinner-grow loading-spinner" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  <div className="spinner-grow loading-spinner" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  <div className="spinner-grow loading-spinner" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                </div>
+                <Loader />
               ) : (
                 <div className="py-3 d-flex flex-column gap-4 align-items-end">
                   <div className="d-flex align-items-center justify-content-center px-4">
@@ -222,7 +281,7 @@ function Bot() {
                           allQuestions.map((question, index) => {
                             return (
                               <button
-                                className="btn btn-primary my-1 w-100 "
+                                className="btn btn-danger my-1 w-100 "
                                 key={index}
                                 onClick={() => handleQuestionClick(question)}
                               >
@@ -231,11 +290,6 @@ function Bot() {
                             );
                           })}
                       </ul>
-                    )}
-                    {isInputShow && (
-                      <>
-                        <InputFields />
-                      </>
                     )}
                   </div>
                 </div>

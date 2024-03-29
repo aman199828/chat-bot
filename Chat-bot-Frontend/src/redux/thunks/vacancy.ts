@@ -23,6 +23,19 @@ export const getAllQuestions = createAsyncThunk(
     }
   }
 );
+export const getStarted = createAsyncThunk(
+  "api/getStarted",
+  async (_, thunkAPI) => {
+    try {
+      const response: VacancyAllQuestionResponse = await axios(
+        "http://localhost:3030/chatbot/getStarted"
+      );
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
 export const FirstQuestion = createAsyncThunk(
   "api/FirstQuestion",
   async (payload: FirstQuestionPayload, thunkAPI) => {

@@ -17,6 +17,24 @@ export interface VacancyState {
   isQuestionShow: boolean;
   isSuccess: boolean;
 }
+export interface VacancyStateModel {
+  isLoading: boolean;
+  allQuestions: [];
+  isInputShow: boolean;
+  thirdQuestion: boolean;
+  fourthQuestion: boolean;
+  fifthQuestion: boolean;
+  previousChat: {
+    role: string;
+    content: string;
+    date: string;
+    midLine: string;
+    endLine: string;
+  }[];
+  chatBotDataOutput: {};
+  isQuestionShow: boolean;
+  isSuccess: boolean;
+}
 export interface SecondQuestionPayload {
   email: string;
   phoneNumber: Number;

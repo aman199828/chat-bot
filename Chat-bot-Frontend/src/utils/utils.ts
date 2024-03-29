@@ -1,16 +1,35 @@
-import { VacancyState } from "../models/vacancyModel";
+import { VacancyState, VacancyStateModel } from "../models/vacancyModel";
 
 export const updateStateIfDifferent = (
   state: VacancyState,
-  payload: any,
+  startLine: string,
   propertyName: {}
 ) => {
-  if (JSON.stringify(propertyName) !== JSON.stringify(payload)) {
-    propertyName = payload;
+  if (JSON.stringify(propertyName) !== JSON.stringify(startLine)) {
+    propertyName = startLine;
     state.isSuccess = true;
     state.previousChat.push({
       role: "EnsuesoftBot",
-      content: payload,
+      content: startLine,
+      date: new Date().toLocaleTimeString(),
+    });
+  }
+};
+export const updateState = (
+  state: VacancyStateModel,
+  startLine: string,
+  midLine: string,
+  endLine: string,
+  propertyName: {}
+) => {
+  if (JSON.stringify(propertyName) !== JSON.stringify(startLine)) {
+    propertyName = startLine;
+    state.isSuccess = true;
+    state.previousChat.push({
+      role: "EnsuesoftBot",
+      content: startLine,
+      midLine: midLine,
+      endLine: endLine,
       date: new Date().toLocaleTimeString(),
     });
   }

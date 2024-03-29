@@ -18,6 +18,19 @@ const getPredefinedQuestions = async (req, res) => {
     res.status(500).json({ status: false, error: "Internal Server Error" });
   }
 };
+const getStarted = async (req, res) => {
+  try {
+    res.status(200).json({
+      status: true,
+      showInput: true,
+      StartLine: "Great! Nice to meet you 👍",
+      MidLine: "Could you share your email with us? ",
+      EndLine: "Don't worry, we're not in the business of sending spam.",
+    });
+  } catch (error) {
+    res.status(500).json({ status: false, error: "Internal Server Error" });
+  }
+};
 
 const firstQuestion = async (req, res) => {
   const { selectedAnswer } = req.body;
@@ -27,7 +40,6 @@ const firstQuestion = async (req, res) => {
       case "I have question about vancency":
         response = {
           status: true,
-          showInput: true,
           question:
             "Please provide your email and phone number regarding the vacancy.",
         };
@@ -35,7 +47,6 @@ const firstQuestion = async (req, res) => {
       case "I have question about my invoice":
         response = {
           status: true,
-          showInput: true,
           question:
             "Please provide your invoice details so we can assist you better.",
         };
@@ -43,14 +54,12 @@ const firstQuestion = async (req, res) => {
       case "I have question about support":
         response = {
           status: true,
-          showInput: true,
           question: "Please describe your support issue in detail.",
         };
         break;
       case "I am developer trying to learn more":
         response = {
           status: true,
-          showInput: true,
           question:
             "What specific topics are you interested in learning about?",
         };
@@ -58,20 +67,17 @@ const firstQuestion = async (req, res) => {
       case "I have question about designing":
         response = {
           status: true,
-          showInput: true,
           question: "Please specify the design-related query you have.",
         };
         break;
       case "Something else":
         response = {
           status: true,
-          showInput: true,
           question: "Please provide details about your query.",
         };
         break;
       default:
         response = {
-          status: false,
           error: "Invalid selection",
         };
     }
@@ -180,4 +186,5 @@ module.exports = {
   threeQuestion,
   fourthQuestion,
   fifthQuestion,
+  getStarted,
 };

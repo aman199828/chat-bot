@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { VacancyState } from "../../models/vacancyModel";
+import { VacancyStateModel } from "../../models/vacancyModel";
 import {
   FifthQuestion,
   FirstQuestion,
@@ -7,11 +7,12 @@ import {
   SecondQuestion,
   ThirdQuestion,
   getAllQuestions,
+  getStarted,
 } from "../thunks/vacancy";
 import { RootState } from "../store";
-import { updateStateIfDifferent } from "../../utils/utils";
+import { updateState, updateStateIfDifferent } from "../../utils/utils";
 
-const initialState: VacancyState = {
+const initialState: VacancyStateModel = {
   isLoading: false,
   allQuestions: [],
   isInputShow: false,
@@ -32,6 +33,26 @@ const vacancySlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(getStarted.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(
+      getStarted.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        updateState(
+          state,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
+          state.chatBotDataOutput
+        );
+        state.isInputShow = action.payload.showInput;
+        state.isLoading = false;
+      }
+    );
+    builder.addCase(getStarted.rejected, (state) => {
+      state.isLoading = false;
+    });
     builder.addCase(getAllQuestions.pending, (state) => {
       state.isLoading = true;
     });
@@ -57,7 +78,6 @@ const vacancySlice = createSlice({
           state.chatBotDataOutput
         );
         state.isLoading = false;
-        state.isInputShow = action.payload.showInput;
       }
     );
     builder.addCase(FirstQuestion.rejected, (state) => {
@@ -78,6 +98,7 @@ const vacancySlice = createSlice({
         );
         state.isInputShow = false;
         state.thirdQuestion = true;
+        state.isSuccess = true;
       }
     );
     builder.addCase(SecondQuestion.rejected, (state) => {
@@ -85,6 +106,7 @@ const vacancySlice = createSlice({
     });
     builder.addCase(ThirdQuestion.pending, (state) => {
       state.isLoading = true;
+      state.isSuccess = false;
     });
     builder.addCase(
       ThirdQuestion.fulfilled,
@@ -98,6 +120,7 @@ const vacancySlice = createSlice({
         state.allQuestions = action.payload.nextQuestion.answer;
         state.isInputShow = false;
         state.fourthQuestion = true;
+        state.isSuccess = true;
       }
     );
     builder.addCase(ThirdQuestion.rejected, (state) => {
