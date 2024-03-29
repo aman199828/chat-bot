@@ -137,3 +137,19 @@
     transform: translateY(-10px);
   }
 }
+
+/* .test {
+  animation: example 5s linear 2s infinite alternate;
+}
+
+@keyframes example {
+  0% {
+    background-color: red !important;
+  }
+  50% {
+    background-color: pink !important;
+  }
+  100% {
+    background-color: green !important;
+  }
+} */

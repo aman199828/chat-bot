@@ -8,14 +8,7 @@ exports.vancencySecondQuestions = {
     "Business Development Executive(BDE)",
   ],
 };
-exports.PredefineQuestion = [
-  "I have question about vancency",
-  "I have question about my invoice ",
-  "I have question about support",
-  "I am developer trying to learn more ",
-  "I have question about designing",
-  "Something else",
-];
+exports.PredefineQuestion = ["Apply For Job", "Hire Dedicated Team"];
 
 exports.vancencyThirdQuestions = {
   question: "How many years of exprience do you have",

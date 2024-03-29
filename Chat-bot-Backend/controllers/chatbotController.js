@@ -8,16 +8,7 @@ const {
 } = require("../utils/utils");
 const { sendMailMiddleware } = require("../middleware/emailSend/emailSend");
 // Function to get predefined questions
-const getPredefinedQuestions = async (req, res) => {
-  try {
-    res.status(200).json({
-      status: true,
-      data: PredefineQuestion,
-    });
-  } catch (error) {
-    res.status(500).json({ status: false, error: "Internal Server Error" });
-  }
-};
+
 const getStarted = async (req, res) => {
   try {
     res.status(200).json({
@@ -37,14 +28,13 @@ const firstQuestion = async (req, res) => {
   try {
     let response;
     switch (selectedAnswer) {
-      case "I have question about vancency":
+      case "Apply For Job":
         response = {
           status: true,
-          question:
-            "Please provide your email and phone number regarding the vacancy.",
+          question: vancencySecondQuestions,
         };
         break;
-      case "I have question about my invoice":
+      case "Hire Dedicated Team":
         response = {
           status: true,
           question:
@@ -89,18 +79,18 @@ const firstQuestion = async (req, res) => {
   }
 };
 
-const secondQuestion = async (req, res) => {
+const UserInfoQuestion = async (req, res) => {
   try {
     const userInfo = {
       email: req.body.email,
-      phoneNumber: req.body.phoneNumber,
     };
 
     const interviewer = await InterviewModal.create(userInfo);
     res.status(200).json({
       status: true,
       data: interviewer,
-      nextQuestion: vancencySecondQuestions,
+      Question: "What are you primarily looking for, from us?",
+      nextQuestion: PredefineQuestion,
     });
   } catch (error) {
     // Handle errors
@@ -180,9 +170,8 @@ const fifthQuestion = async (req, res) => {
 };
 
 module.exports = {
-  getPredefinedQuestions,
   firstQuestion,
-  secondQuestion,
+  UserInfoQuestion,
   threeQuestion,
   fourthQuestion,
   fifthQuestion,

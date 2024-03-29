@@ -10,19 +10,6 @@ import {
   VacancyAllQuestionResponse,
 } from "../../models/vacancyModel";
 
-export const getAllQuestions = createAsyncThunk(
-  "api/getFirstQuestion",
-  async (_, thunkAPI) => {
-    try {
-      const response: VacancyAllQuestionResponse = await axios(
-        "http://localhost:3030/chatbot/preDefine-question"
-      );
-      return response.data;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
 export const getStarted = createAsyncThunk(
   "api/getStarted",
   async (_, thunkAPI) => {
@@ -50,12 +37,12 @@ export const FirstQuestion = createAsyncThunk(
     }
   }
 );
-export const SecondQuestion = createAsyncThunk(
-  "api/SecondQuestion",
+export const UserInfoQuestion = createAsyncThunk(
+  "api/UserInfoQuestion",
   async (payload: SecondQuestionPayload, thunkAPI) => {
     try {
       const response: VacancyAllQuestionResponse = await axios.post(
-        "http://localhost:3030/chatbot/second-question",
+        "http://localhost:3030/chatbot/userInfo",
         payload
       );
       return response.data;

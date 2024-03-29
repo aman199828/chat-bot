@@ -17,7 +17,6 @@ import {
   FirstQuestion,
   FourthQuestion,
   ThirdQuestion,
-  getAllQuestions,
   getStarted,
 } from "../../redux/thunks/vacancy";
 import InputFields from "../Inputs";
@@ -50,32 +49,31 @@ function Bot() {
       const contentTimeout = setTimeout(() => {
         setshowContent(true);
         setShowLoaderMid(true);
-      }, 3000);
+      }, 2000);
 
       return () => clearTimeout(contentTimeout);
     }
-  }, [isSuccess, showContent]);
+  }, [isSuccess, showContent, previousChatData]);
 
   useEffect(() => {
     if (showContent && !showMidLine) {
       const midLineTimeout = setTimeout(() => {
         setShowMidLine(true);
         setShowLoadeEnd(true);
-      }, 3000);
+      }, 2000);
 
       return () => clearTimeout(midLineTimeout);
     }
-  }, [showContent, showMidLine]);
+  }, [showContent, showMidLine, previousChatData]);
 
   useEffect(() => {
     if (showMidLine && !showEndLine) {
       const endLineTimeout = setTimeout(() => {
         setShowEndLine(true);
-      }, 3000);
-
+      }, 2000);
       return () => clearTimeout(endLineTimeout);
     }
-  }, [showMidLine, showEndLine]);
+  }, [showMidLine, showEndLine, previousChatData]);
 
   const dispatch = useAppDispatch();
   const handleGetStart = () => {
@@ -130,9 +128,7 @@ function Bot() {
   };
   useEffect(() => {
     if (isSuccess) {
-      setTimeout(() => {
-        handleScroll();
-      }, 1000);
+      handleScroll();
     }
   }, [isSuccess, previousChatData, showEndLine]);
   return (
@@ -197,7 +193,7 @@ function Bot() {
                   const isUser = chatData.role !== "EnsuesoftBot";
                   const messageClass = isUser
                     ? "bg-gray p-3 rounded-userMsg"
-                    : "bg-primary-subtle p-3 rounded-chatgpt";
+                    : "bg-primary-subtle p-3 rounded-chatgpt test";
 
                   return (
                     <React.Fragment key={index}>
@@ -236,20 +232,28 @@ function Bot() {
                           )}
 
                           {showMidLine ? (
-                            <div className={`${messageClass} mt-2`}>
-                              <p className="mb-0 fs-14 word-break">
-                                {chatData.midLine}
-                              </p>
-                            </div>
+                            chatData && chatData.endLine ? (
+                              <div className={`${messageClass} mt-2`}>
+                                <p className="mb-0 fs-14 word-break">
+                                  {chatData.midLine}
+                                </p>
+                              </div>
+                            ) : (
+                              ""
+                            )
                           ) : (
                             showLoaderMid && <Loader />
                           )}
                           {showEndLine ? (
-                            <div className={`${messageClass} mt-2`}>
-                              <p className="mb-0 fs-14 word-break">
-                                {chatData.endLine}
-                              </p>
-                            </div>
+                            chatData && chatData.endLine ? (
+                              <div className={`${messageClass} mt-2`}>
+                                <p className="mb-0 fs-14 word-break">
+                                  {chatData.endLine}
+                                </p>
+                              </div>
+                            ) : (
+                              ""
+                            )
                           ) : (
                             showloaderEnd && <Loader />
                           )}

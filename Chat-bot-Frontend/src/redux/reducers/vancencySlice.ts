@@ -4,9 +4,8 @@ import {
   FifthQuestion,
   FirstQuestion,
   FourthQuestion,
-  SecondQuestion,
+  UserInfoQuestion,
   ThirdQuestion,
-  getAllQuestions,
   getStarted,
 } from "../thunks/vacancy";
 import { RootState } from "../store";
@@ -53,19 +52,6 @@ const vacancySlice = createSlice({
     builder.addCase(getStarted.rejected, (state) => {
       state.isLoading = false;
     });
-    builder.addCase(getAllQuestions.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(
-      getAllQuestions.fulfilled,
-      (state, action: PayloadAction<any>) => {
-        state.isLoading = false;
-        state.allQuestions = action.payload.data;
-      }
-    );
-    builder.addCase(getAllQuestions.rejected, (state) => {
-      state.isLoading = false;
-    });
     builder.addCase(FirstQuestion.pending, (state) => {
       state.isLoading = true;
     });
@@ -83,17 +69,17 @@ const vacancySlice = createSlice({
     builder.addCase(FirstQuestion.rejected, (state) => {
       state.isLoading = false;
     });
-    builder.addCase(SecondQuestion.pending, (state) => {
+    builder.addCase(UserInfoQuestion.pending, (state) => {
       state.isLoading = true;
     });
     builder.addCase(
-      SecondQuestion.fulfilled,
+      UserInfoQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        state.allQuestions = action.payload.nextQuestion.answer;
+        state.allQuestions = action.payload.nextQuestion;
         updateStateIfDifferent(
           state,
-          action.payload.nextQuestion.question,
+          action.payload.Question,
           state.chatBotDataOutput
         );
         state.isInputShow = false;
@@ -101,7 +87,7 @@ const vacancySlice = createSlice({
         state.isSuccess = true;
       }
     );
-    builder.addCase(SecondQuestion.rejected, (state) => {
+    builder.addCase(UserInfoQuestion.rejected, (state) => {
       state.isLoading = false;
     });
     builder.addCase(ThirdQuestion.pending, (state) => {

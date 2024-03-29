@@ -37,7 +37,6 @@ export interface VacancyStateModel {
 }
 export interface SecondQuestionPayload {
   email: string;
-  phoneNumber: Number;
 }
 export interface FirstQuestionPayload {
   selectedAnswer: string;
