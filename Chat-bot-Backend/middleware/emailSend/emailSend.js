@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-exports.sendMailMiddleware = async (email, sendEmail, phoneNumber, res) => {
+exports.sendMailMiddleware = async (email, sendEmail, res) => {
   try {
     let transporter = nodemailer.createTransport({
       service: "gmail",
@@ -71,7 +71,6 @@ exports.sendMailMiddleware = async (email, sendEmail, phoneNumber, res) => {
           <div class="container">
             <div class="email-content">
               <h2 class="mt-30">${email}</h2>
-              <h2 class="mt-30">${phoneNumber}</h2>
             </div>
           </div>
         </div>

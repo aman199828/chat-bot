@@ -15,5 +15,5 @@ const vancencySchema = new mongoose.Schema({
     type: String,
   },
 });
-const InterviewModal = mongoose.model("Interviewer", vancencySchema);
-module.exports = InterviewModal;
+const vancencyModal = mongoose.model("Interviewer", vancencySchema);
+module.exports = vancencyModal;
