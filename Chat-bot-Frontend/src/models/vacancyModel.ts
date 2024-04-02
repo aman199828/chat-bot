@@ -35,7 +35,7 @@ export interface VacancyStateModel {
   isQuestionShow: boolean;
   isSuccess: boolean;
 }
-export interface SecondQuestionPayload {
+export interface UserInfoQuestionPayload {
   email: string;
 }
 export interface FirstQuestionPayload {

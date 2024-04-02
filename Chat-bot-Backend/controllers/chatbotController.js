@@ -1,10 +1,10 @@
 const fs = require("fs");
 const InterviewModal = require("../modals/vancencyModal");
 const {
-  vancencySecondQuestions,
-  vancencyThirdQuestions,
   vancencyFourthQuestions,
   PredefineQuestion,
+  hireDedicatedTeamQuestions,
+  getVacancyTechnologies,
 } = require("../utils/utils");
 const { sendMailMiddleware } = require("../middleware/emailSend/emailSend");
 // Function to get predefined questions
@@ -22,48 +22,41 @@ const getStarted = async (req, res) => {
     res.status(500).json({ status: false, error: "Internal Server Error" });
   }
 };
+const UserInfoQuestion = async (req, res) => {
+  try {
+    const userInfo = {
+      email: req.body.email,
+    };
 
+    const viewerInfo = await InterviewModal.create(userInfo);
+    res.status(200).json({
+      status: true,
+      data: viewerInfo,
+      Question: "What are you primarily looking for, from us?",
+      nextQuestion: PredefineQuestion,
+    });
+  } catch (error) {
+    // Handle errors
+    // console.error("Error getting predefined questions:", error);
+    res.status(500).json({ status: false, error: "Internal Server Error" });
+  }
+};
 const firstQuestion = async (req, res) => {
   const { selectedAnswer } = req.body;
   try {
     let response;
     switch (selectedAnswer) {
       case "Apply For Job":
+        
         response = {
           status: true,
-          question: vancencySecondQuestions,
+          question: getVacancyTechnologies,
         };
         break;
       case "Hire Dedicated Team":
         response = {
           status: true,
-          question:
-            "Please provide your invoice details so we can assist you better.",
-        };
-        break;
-      case "I have question about support":
-        response = {
-          status: true,
-          question: "Please describe your support issue in detail.",
-        };
-        break;
-      case "I am developer trying to learn more":
-        response = {
-          status: true,
-          question:
-            "What specific topics are you interested in learning about?",
-        };
-        break;
-      case "I have question about designing":
-        response = {
-          status: true,
-          question: "Please specify the design-related query you have.",
-        };
-        break;
-      case "Something else":
-        response = {
-          status: true,
-          question: "Please provide details about your query.",
+          question:hireDedicatedTeamQuestions,
         };
         break;
       default:
@@ -79,38 +72,36 @@ const firstQuestion = async (req, res) => {
   }
 };
 
-const UserInfoQuestion = async (req, res) => {
-  try {
-    const userInfo = {
-      email: req.body.email,
-    };
 
-    const interviewer = await InterviewModal.create(userInfo);
-    res.status(200).json({
-      status: true,
-      data: interviewer,
-      Question: "What are you primarily looking for, from us?",
-      nextQuestion: PredefineQuestion,
-    });
-  } catch (error) {
-    // Handle errors
-    // console.error("Error getting predefined questions:", error);
-    res.status(500).json({ status: false, error: "Internal Server Error" });
-  }
-};
 
-const threeQuestion = async (req, res) => {
+const SecondQuestion = async (req, res) => {
   try {
-    const { email, selectedTech } = req.body;
+    const { email, selectedAnswer } = req.body;
 
     await InterviewModal.updateOne(
       { email: email },
-      { $set: { selectedTech: selectedTech } }
+      { $set: { selectedTech: selectedAnswer } }
     );
-    res.status(200).json({
-      status: true,
-      nextQuestion: vancencyThirdQuestions,
-    });
+    let response;
+    switch (selectedAnswer) {
+      case "Apply For Job":
+        response = {
+          status: true,
+          question: getVacancyTechnologies,
+        };
+        break;
+      case "Hire Dedicated Team":
+        response = {
+          status: true,
+          question:hireDedicatedTeamQuestions,
+        };
+        break;
+      default:
+        response = {
+          error: "Invalid selection",
+        };
+    }
+    return res.status(200).json(response)
   } catch (error) {
     // Handle errors
     // console.error("Error getting predefined questions:", error);
@@ -170,10 +161,12 @@ const fifthQuestion = async (req, res) => {
 };
 
 module.exports = {
-  firstQuestion,
+  
+  getStarted,
   UserInfoQuestion,
-  threeQuestion,
+  firstQuestion,
+  SecondQuestion,
   fourthQuestion,
   fifthQuestion,
-  getStarted,
+ 
 };

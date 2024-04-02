@@ -1,4 +1,4 @@
-exports.vancencySecondQuestions = {
+exports.getVacancyTechnologies = {
   question: "What specific technologies do you typically work",
   answer: [
     "Nodejs Developer",
@@ -17,4 +17,8 @@ exports.vancencyThirdQuestions = {
 exports.vancencyFourthQuestions = {
   question: "Have you completed any training relevant to this position?",
   answer: ["yes", "no"],
+};
+exports.hireDedicatedTeamQuestions = {
+  question: "Which team would you like to hire for your project",
+  answer: ["React Team", "MernStack Team", "Designer Team", "DotNet Team", "UX/UI Team", ],
 };
