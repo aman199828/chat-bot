@@ -1,48 +1,54 @@
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useAppDispatch } from "../../redux/hooks";
-import { UserInfoQuestion } from "../../redux/thunks/vacancy";
+import { UseFormRegister } from "react-hook-form";
+import { useAppSelector } from "../../redux/hooks";
 
-interface IFormInput {
-  email: string;
-  phoneNumber: Number;
+import {
+  selectInputType,
+  selectPlaceholder,
+} from "../../redux/reducers/vancencySlice";
+import { IFormInput } from "../../models/chatBotModel";
+
+interface registerType {
+  register: UseFormRegister<IFormInput>;
 }
+export default function InputFields({ register }: registerType) {
+  const inputType = useAppSelector(selectInputType);
 
-export default function InputFields() {
-  const dispatch = useAppDispatch();
-  const { register, handleSubmit } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    const payload = {
-      email: data.email,
-    };
-    dispatch(UserInfoQuestion(payload));
-  };
-
+  const placeholder = useAppSelector(selectPlaceholder);
+  console.log(placeholder);
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="form-row align-items-center">
-        <div className="col-auto">
-          <label className="sr-only" htmlFor="inlineFormInputGroup">
-            Email
-          </label>
-          <div className="input-group mb-2">
-            <div className="input-group-prepend">
-              <div className="input-group-text">@</div>
-            </div>
+    <div className="form-row align-items-center">
+      {inputType && inputType == "email" ? (
+        <div className="form-row align-items-center p-3 col-10 mx-auto rounded-3 test-border">
+          <div className="d-flex align-items-center justify-content-between gap-3">
             <input
-              type="text"
-              className="form-control"
+              type={inputType}
+              className="form-control w-75 border-0 shadow-none"
               id="inlineFormInputGroup"
-              placeholder="Username"
+              placeholder={placeholder && placeholder}
               {...register("email")}
             />
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
           </div>
         </div>
-        <div className="col-auto">
-          <button type="submit" className="btn btn-primary mb-2">
-            Submit
-          </button>
+      ) : (
+        <div className="form-row align-items-center p-3 col-10 mx-auto rounded-3 test-border">
+          <div className="d-flex align-items-center justify-content-between gap-3">
+            <textarea
+              className="form-control w-75 border-0 shadow-none"
+              style={{ resize: "none" }}
+              id="exampleFormControlTextarea1"
+              rows={5}
+              placeholder={placeholder && placeholder}
+              {...register("textArea")}
+            ></textarea>
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          </div>
         </div>
-      </div>
-    </form>
+      )}
+    </div>
   );
 }

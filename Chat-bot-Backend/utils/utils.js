@@ -27,7 +27,7 @@ exports.hireDedicatedTeamQuestions = {
   question:
     "Can you tell me a little more about what kind of expertise or technology you'll want to hire for your project?",
   placeHolder: "example Reactjs, MernStack Dev etc ",
-  showInput: true,
+  showTextArea: true,
 };
 
 // Perfect!

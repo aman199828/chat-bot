@@ -7,6 +7,7 @@ import {
   UserInfoQuestion,
   ThirdQuestion,
   getStarted,
+  SecondQuestion,
 } from "../thunks/vacancy";
 import { RootState } from "../store";
 import { updateState, updateStateIfDifferent } from "../../utils/utils";
@@ -15,6 +16,8 @@ const initialState: VacancyStateModel = {
   isLoading: false,
   allQuestions: [],
   isInputShow: false,
+  firstQuestion: false,
+  secondQuestion: false,
   thirdQuestion: false,
   fourthQuestion: false,
   fifthQuestion: false,
@@ -22,6 +25,8 @@ const initialState: VacancyStateModel = {
   previousChat: [],
   isQuestionShow: false,
   isSuccess: false,
+  placeholder: "",
+  inputType: "",
 };
 const vacancySlice = createSlice({
   name: "vacancy",
@@ -47,26 +52,11 @@ const vacancySlice = createSlice({
         );
         state.isInputShow = action.payload.showInput;
         state.isLoading = false;
+        state.placeholder = action.payload.placeholder;
+        state.inputType = action.payload.inputType;
       }
     );
     builder.addCase(getStarted.rejected, (state) => {
-      state.isLoading = false;
-    });
-    builder.addCase(FirstQuestion.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(
-      FirstQuestion.fulfilled,
-      (state, action: PayloadAction<any>) => {
-        updateStateIfDifferent(
-          state,
-          action.payload.question,
-          state.chatBotDataOutput
-        );
-        state.isLoading = false;
-      }
-    );
-    builder.addCase(FirstQuestion.rejected, (state) => {
       state.isLoading = false;
     });
     builder.addCase(UserInfoQuestion.pending, (state) => {
@@ -76,31 +66,60 @@ const vacancySlice = createSlice({
       UserInfoQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        state.allQuestions = action.payload.nextQuestion;
+        state.allQuestions = action.payload.nextQuestion.answer;
         updateStateIfDifferent(
           state,
-          action.payload.Question,
+          action.payload.nextQuestion.question,
           state.chatBotDataOutput
         );
         state.isInputShow = false;
-        state.thirdQuestion = true;
+        state.firstQuestion = true;
         state.isSuccess = true;
       }
     );
     builder.addCase(UserInfoQuestion.rejected, (state) => {
       state.isLoading = false;
+      state.isSuccess = false;
     });
-    builder.addCase(ThirdQuestion.pending, (state) => {
+    builder.addCase(FirstQuestion.pending, (state) => {
       state.isLoading = true;
       state.isSuccess = false;
     });
     builder.addCase(
-      ThirdQuestion.fulfilled,
+      FirstQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
-        state.isLoading = false;
+        state.allQuestions = action.payload.nextQuestion.answer;
         updateStateIfDifferent(
           state,
           action.payload.nextQuestion.question,
+          state.chatBotDataOutput
+        );
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.placeholder = action.payload.nextQuestion.placeHolder;
+        state.inputType = action.payload.nextQuestion.type;
+        state.isInputShow = action.payload.nextQuestion.showTextArea;
+        state.secondQuestion = true;
+        state.firstQuestion = false;
+      }
+    );
+    builder.addCase(FirstQuestion.rejected, (state) => {
+      state.isLoading = false;
+    });
+
+    builder.addCase(SecondQuestion.pending, (state) => {
+      state.isLoading = true;
+      state.isSuccess = false;
+    });
+    builder.addCase(
+      SecondQuestion.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        state.isLoading = false;
+        updateState(
+          state,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          "",
           state.chatBotDataOutput
         );
         state.allQuestions = action.payload.nextQuestion.answer;
@@ -109,7 +128,7 @@ const vacancySlice = createSlice({
         state.isSuccess = true;
       }
     );
-    builder.addCase(ThirdQuestion.rejected, (state) => {
+    builder.addCase(SecondQuestion.rejected, (state) => {
       state.isLoading = false;
     });
     builder.addCase(FourthQuestion.pending, (state) => {
@@ -167,6 +186,13 @@ export const selectIsInputShow = (state: RootState) => {
 export const selectIsLoading = (state: RootState) => {
   return state.vacancy.isLoading;
 };
+
+export const selectFirstQuestion = (state: RootState) => {
+  return state.vacancy.firstQuestion;
+};
+export const selectSecondQuestion = (state: RootState) => {
+  return state.vacancy.secondQuestion;
+};
 export const selectThirdQuestion = (state: RootState) => {
   return state.vacancy.thirdQuestion;
 };
@@ -184,6 +210,12 @@ export const selectPreviousChat = (state: RootState) => {
 };
 export const selectIsSuccess = (state: RootState) => {
   return state.vacancy.isSuccess;
+};
+export const selectPlaceholder = (state: RootState) => {
+  return state.vacancy.placeholder;
+};
+export const selectInputType = (state: RootState) => {
+  return state.vacancy.inputType;
 };
 
 export const vacancyReducer = vacancySlice.reducer;

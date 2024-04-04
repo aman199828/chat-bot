@@ -17,7 +17,7 @@ const getStarted = async (req, res) => {
       status: true,
       showInput: true,
       placeholder: "Please Provide Your Email",
-      type: "email",
+      inputType: "email",
       StartLine: "Great! Nice to meet you 👍",
       MidLine: "Could you share your email with us? ",
       EndLine: "Don't worry, we're not in the business of sending spam.",
@@ -45,8 +45,8 @@ const UserInfoQuestion = async (req, res) => {
   }
 };
 const firstQuestion = async (req, res) => {
-  const { selectedAnswer, userEamil } = req.body;
-  const userInfo = await UserModal.findOne({ email: userEamil });
+  const { selectedAnswer, userEmail } = req.body;
+  const userInfo = await UserModal.findOne({ email: userEmail });
   try {
     let response;
     switch (selectedAnswer) {
@@ -56,7 +56,7 @@ const firstQuestion = async (req, res) => {
         };
         await vancencyModal.create(jobInfo);
         await UserModal.updateOne(
-          { email: userEamil },
+          { email: userEmail },
           { $set: { applyForJob: true } }
         );
         response = {
@@ -70,7 +70,7 @@ const firstQuestion = async (req, res) => {
         };
         await HireTeam.create(hireTeamInfo);
         await UserModal.updateOne(
-          { email: userEamil },
+          { email: userEmail },
           { $set: { hireDedicatedTeam: true } }
         );
         response = {
@@ -93,11 +93,11 @@ const firstQuestion = async (req, res) => {
 
 const SecondQuestion = async (req, res) => {
   try {
-    const { userEamil, selectedAnswer } = req.body;
-    const userInfo = await UserModal.findOne({ email: userEamil });
+    const { userEmail, selectedAnswer } = req.body;
+    const userInfo = await UserModal.findOne({ email: userEmail });
     if (userInfo.applyForJob) {
       await vancencyModal.updateOne(
-        { email: userEamil },
+        { email: userEmail },
         { $set: { selectedTech: selectedAnswer } }
       );
       res.status(200).json({
@@ -106,7 +106,7 @@ const SecondQuestion = async (req, res) => {
       });
     } else if (userInfo.hireDedicatedTeam) {
       await HireTeam.updateOne(
-        { email: userEamil },
+        { email: userEmail },
         { $set: { technologyHire: selectedAnswer } }
       );
       res.status(200).json({
@@ -129,13 +129,13 @@ const SecondQuestion = async (req, res) => {
     res.status(500).json({ status: false, error: "Internal Server Error" });
   }
 };
-const fourthQuestion = async (req, res) => {
+const thirdQuestion = async (req, res) => {
   try {
-    const { userEamil, selectedAnswer } = req.body;
-    const userInfo = await UserModal.findOne({ email: userEamil });
+    const { userEmail, selectedAnswer } = req.body;
+    const userInfo = await UserModal.findOne({ email: userEmail });
     if (userInfo.applyForJob) {
       await InterviewModal.updateOne(
-        { email: userEamil },
+        { email: userEmail },
         { $set: { yearExp: selectedAnswer } }
       );
       if (yearExp == "Fresher") {
@@ -145,7 +145,7 @@ const fourthQuestion = async (req, res) => {
         });
       } else {
         const sendEmail = "aman.dhiman@ensuesoft.com";
-        await sendMailMiddleware(userEamil, sendEmail, res);
+        await sendMailMiddleware(userEmail, sendEmail, res);
         res.status(200).json({
           status: true,
           message:
@@ -154,7 +154,7 @@ const fourthQuestion = async (req, res) => {
       }
     } else if (userInfo.hireDedicatedTeam) {
       await HireTeam.updateOne(
-        { email: userEamil },
+        { email: userEmail },
         { $set: { projectRequirements: selectedAnswer } }
       );
       res.status(200).json({
@@ -180,17 +180,17 @@ const fourthQuestion = async (req, res) => {
     res.status(500).json({ status: false, error: "Internal Server Error" });
   }
 };
-const fifthQuestion = async (req, res) => {
+const fourthQuestion = async (req, res) => {
   try {
-    const { userEamil, selectedAnswer } = req.body;
-    const userInfo = await UserModal.findOne({ email: userEamil });
+    const { userEmail, selectedAnswer } = req.body;
+    const userInfo = await UserModal.findOne({ email: userEmail });
     if (userInfo.applyForJob) {
       await InterviewModal.updateOne(
-        { email: userEamil },
+        { email: userEmail },
         { $set: { traning: selectedAnswer } }
       );
 
-      const userInfo = await InterviewModal.findOne({ email: userEamil });
+      const userInfo = await InterviewModal.findOne({ email: userEmail });
       const sendEmail = "aman.dhiman@ensuesoft.com";
       await sendMailMiddleware(email, sendEmail, userInfo.phoneNumber, res);
       res.status(200).json({
@@ -200,7 +200,7 @@ const fifthQuestion = async (req, res) => {
       });
     } else if (userInfo.hireDedicatedTeam) {
       await HireTeam.updateOne(
-        { email: userEamil },
+        { email: userEmail },
         { $set: { technologyHire: selectedAnswer } }
       );
       res.status(200).json({
@@ -224,10 +224,10 @@ const fifthQuestion = async (req, res) => {
     res.status(500).json({ status: false, error: "Internal Server Error" });
   }
 };
-const sixthQuestion = async (req, res) => {
+const fifthQuestion = async (req, res) => {
   try {
-    const { userEamil, selectedAnswer } = req.body;
-    const userInfo = await UserModal.findOne({ email: userEamil });
+    const { userEmail, selectedAnswer } = req.body;
+    const userInfo = await UserModal.findOne({ email: userEmail });
     if (userInfo.applyForJob) {
       res.status(200).json({
         status: true,
@@ -235,7 +235,7 @@ const sixthQuestion = async (req, res) => {
       });
     } else if (userInfo.hireDedicatedTeam) {
       await HireTeam.updateOne(
-        { email: userEamil },
+        { email: userEmail },
         { $set: { technologyHire: selectedAnswer } }
       );
       res.status(200).json({
@@ -265,7 +265,7 @@ module.exports = {
   UserInfoQuestion,
   firstQuestion,
   SecondQuestion,
+  thirdQuestion,
   fourthQuestion,
   fifthQuestion,
-  sixthQuestion,
 };

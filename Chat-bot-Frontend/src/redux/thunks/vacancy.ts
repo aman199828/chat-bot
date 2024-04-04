@@ -2,10 +2,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import {
-  FifthQuestionPayload,
-  FirstQuestionPayload,
-  FourthQuestionPayload,
-  ThirdQuestionPayload,
+  QuestionPayload,
   UserInfoQuestionPayload,
   VacancyAllQuestionResponse,
 } from "../../models/vacancyModel";
@@ -39,7 +36,7 @@ export const UserInfoQuestion = createAsyncThunk(
 );
 export const FirstQuestion = createAsyncThunk(
   "api/FirstQuestion",
-  async (payload: FirstQuestionPayload, thunkAPI) => {
+  async (payload: QuestionPayload, thunkAPI) => {
     try {
       const response: VacancyAllQuestionResponse = await axios.post(
         "http://localhost:3030/chatbot/first-question",
@@ -52,9 +49,23 @@ export const FirstQuestion = createAsyncThunk(
   }
 );
 
+export const SecondQuestion = createAsyncThunk(
+  "api/SecondQuestion",
+  async (payload: QuestionPayload, thunkAPI) => {
+    try {
+      const response: VacancyAllQuestionResponse = await axios.post(
+        "http://localhost:3030/chatbot/second-question",
+        payload
+      );
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
 export const ThirdQuestion = createAsyncThunk(
   "api/ThirdQuestion",
-  async (payload: ThirdQuestionPayload, thunkAPI) => {
+  async (payload: QuestionPayload, thunkAPI) => {
     try {
       const response: VacancyAllQuestionResponse = await axios.post(
         "http://localhost:3030/chatbot/third-question",
@@ -68,12 +79,13 @@ export const ThirdQuestion = createAsyncThunk(
 );
 export const FourthQuestion = createAsyncThunk(
   "api/FourthQuestion",
-  async (payload: FourthQuestionPayload, thunkAPI) => {
+  async (payload: QuestionPayload, thunkAPI) => {
     try {
       const response: VacancyAllQuestionResponse = await axios.post(
         "http://localhost:3030/chatbot/fourth-question",
         payload
       );
+
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error);
@@ -82,7 +94,7 @@ export const FourthQuestion = createAsyncThunk(
 );
 export const FifthQuestion = createAsyncThunk(
   "api/FifthQuestion",
-  async (payload: FifthQuestionPayload, thunkAPI) => {
+  async (payload: QuestionPayload, thunkAPI) => {
     try {
       const response: VacancyAllQuestionResponse = await axios.post(
         "http://localhost:3030/chatbot/fifth-question",

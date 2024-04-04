@@ -6,7 +6,7 @@ const connectToDatabase = async () => {
     await mongoose.connect(
       "mongodb+srv://amandhiman:" +
         process.env.MONGO_PASSWORD +
-        "@cluster0.ewbpwdp.mongodb.net/?retryWrites=true&w=majority"
+        "@cluster0.ewbpwdp.mongodb.net/chat-bot?retryWrites=true&w=majority"
     );
     console.log("Connected to Mongo!");
   } catch (error) {

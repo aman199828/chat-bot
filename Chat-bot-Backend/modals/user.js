@@ -14,5 +14,5 @@ const UserSchema = new mongoose.Schema({
     default: false,
   },
 });
-const UserModal = mongoose.model("userData", UserSchema);
+const UserModal = mongoose.model("userInfo", UserSchema);
 module.exports = UserModal;

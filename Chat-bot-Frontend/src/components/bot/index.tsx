@@ -3,12 +3,14 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
   selectAllQuestions,
   selectFifthQuestion,
+  selectFirstQuestion,
   selectFourthQuestion,
   selectIsInputShow,
   selectIsLoading,
   selectIsQuestionShow,
   selectIsSuccess,
   selectPreviousChat,
+  selectSecondQuestion,
   selectThirdQuestion,
   vacancyActions,
 } from "../../redux/reducers/vancencySlice";
@@ -16,13 +18,17 @@ import {
   FifthQuestion,
   FirstQuestion,
   FourthQuestion,
+  SecondQuestion,
   ThirdQuestion,
+  UserInfoQuestion,
   getStarted,
 } from "../../redux/thunks/vacancy";
 import InputFields from "../Inputs";
 import image from "../../assets/chat-bot.png";
 import image1 from "../../assets/ensuesoft-logo.svg";
 import Loader from "../loader";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { IFormInput } from "../../models/chatBotModel";
 
 function Bot() {
   const [isShowGptBox, setIsShowGptBox] = useState(false);
@@ -33,7 +39,9 @@ function Bot() {
   const isSuccess = useAppSelector(selectIsSuccess);
   const allQuestions = useAppSelector(selectAllQuestions);
   const isThirdQuestion = useAppSelector(selectThirdQuestion);
+  const isFirstQuestion = useAppSelector(selectFirstQuestion);
   const isFourthQuestion = useAppSelector(selectFourthQuestion);
+  const isSecondQuestion = useAppSelector(selectSecondQuestion);
   const isFifthQuestion = useAppSelector(selectFifthQuestion);
   const isQuestionShow = useAppSelector(selectIsQuestionShow);
   const isInputShow = useAppSelector(selectIsInputShow);
@@ -43,7 +51,7 @@ function Bot() {
   const [showMidLine, setShowMidLine] = useState(false);
   const [showEndLine, setShowEndLine] = useState(false);
   const [showloaderEnd, setShowLoadeEnd] = useState(false);
-
+  const { register, handleSubmit } = useForm<IFormInput>();
   useEffect(() => {
     if (isSuccess && !showContent) {
       const contentTimeout = setTimeout(() => {
@@ -90,30 +98,30 @@ function Bot() {
         date: new Date().toLocaleTimeString(),
       };
       dispatch(vacancyActions.updatePreviousChat(question));
-
-      if (isFifthQuestion) {
+      if (isFirstQuestion) {
         const payload = {
-          email: "aman.dhiman@ensuesoft.com",
-          traning: selectedAnswer,
+          userEmail: "aman.dhiman@ensuesoft.com",
+          selectedAnswer: selectedAnswer,
         };
-        dispatch(FifthQuestion(payload));
-      } else if (isFourthQuestion) {
+        dispatch(FirstQuestion(payload));
+      } else if (isSecondQuestion) {
         const payload = {
-          email: "aman.dhiman@ensuesoft.com",
-          yearExp: selectedAnswer,
+          userEmail: "aman.dhiman@ensuesoft.com",
+          selectedAnswer: selectedAnswer,
         };
-        dispatch(FourthQuestion(payload));
+        dispatch(SecondQuestion(payload));
       } else if (isThirdQuestion) {
         const payload = {
-          email: "aman.dhiman@ensuesoft.com",
-          selectedTech: selectedAnswer,
+          userEmail: "aman.dhiman@ensuesoft.com",
+          selectedAnswer: selectedAnswer,
         };
         dispatch(ThirdQuestion(payload));
       } else {
         const payload = {
+          userEmail: "aman.dhiman@ensuesoft.com",
           selectedAnswer: selectedAnswer,
         };
-        dispatch(FirstQuestion(payload));
+        dispatch(FourthQuestion(payload));
       }
     }
   };
@@ -131,6 +139,13 @@ function Bot() {
       handleScroll();
     }
   }, [isSuccess, previousChatData, showEndLine]);
+
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    const payload = {
+      email: data.email,
+    };
+    dispatch(UserInfoQuestion(payload));
+  };
   return (
     <div>
       {isShowGptBox ? (
@@ -266,14 +281,14 @@ function Bot() {
                           </p>
                         </div>
                       </div>
-                      {isInputShow && showEndLine && (
-                        <>
-                          <InputFields />
-                        </>
-                      )}
                     </React.Fragment>
                   );
                 })}
+              {isInputShow && showEndLine && (
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <InputFields register={register} />
+                </form>
+              )}
               {isLoading ? (
                 <Loader />
               ) : (
