@@ -10,7 +10,7 @@ import {
   SecondQuestion,
 } from "../thunks/vacancy";
 import { RootState } from "../store";
-import { updateState, updateStateIfDifferent } from "../../utils/utils";
+import { updateState } from "../../utils/utils";
 
 const initialState: VacancyStateModel = {
   isLoading: false,
@@ -27,6 +27,9 @@ const initialState: VacancyStateModel = {
   isSuccess: false,
   placeholder: "",
   inputType: "",
+  showStartLine:false,
+  showMidLine:false,
+  showEndLine:false,
 };
 const vacancySlice = createSlice({
   name: "vacancy",
@@ -67,9 +70,11 @@ const vacancySlice = createSlice({
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.allQuestions = action.payload.nextQuestion.answer;
-        updateStateIfDifferent(
+        updateState(
           state,
-          action.payload.nextQuestion.question,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
           state.chatBotDataOutput
         );
         state.isInputShow = false;
@@ -89,9 +94,11 @@ const vacancySlice = createSlice({
       FirstQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.allQuestions = action.payload.nextQuestion.answer;
-        updateStateIfDifferent(
+        updateState(
           state,
-          action.payload.nextQuestion.question,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
           state.chatBotDataOutput
         );
         state.isLoading = false;
@@ -114,42 +121,47 @@ const vacancySlice = createSlice({
     builder.addCase(
       SecondQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
-        state.isLoading = false;
+        state.allQuestions = action.payload.nextQuestion.answer;
         updateState(
           state,
           action.payload.StartLine,
           action.payload.MidLine,
-          "",
+          action.payload.EndLine,
           state.chatBotDataOutput
         );
-        state.allQuestions = action.payload.nextQuestion.answer;
-        state.isInputShow = false;
-        state.fourthQuestion = true;
+        state.isLoading = false;
         state.isSuccess = true;
+        state.placeholder = action.payload.placeHolder;
+        state.inputType = action.payload.type;
+        state.isInputShow = action.payload.showTextArea;
+        state.secondQuestion = false;
+        state.thirdQuestion = true;
       }
     );
     builder.addCase(SecondQuestion.rejected, (state) => {
       state.isLoading = false;
     });
-    builder.addCase(FourthQuestion.pending, (state) => {
+    builder.addCase(ThirdQuestion.pending, (state) => {
       state.isLoading = true;
     });
     builder.addCase(
-      FourthQuestion.fulfilled,
+      ThirdQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        updateStateIfDifferent(
+        updateState(
           state,
-          action.payload.nextQuestion.question,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
           state.chatBotDataOutput
         );
         state.allQuestions = action.payload.nextQuestion.answer;
         state.isInputShow = false;
         state.thirdQuestion = false;
-        state.fifthQuestion = true;
+        state.fourthQuestion = true;
       }
     );
-    builder.addCase(FourthQuestion.rejected, (state) => {
+    builder.addCase(ThirdQuestion.rejected, (state) => {
       state.isLoading = false;
     });
     builder.addCase(FifthQuestion.pending, (state) => {
@@ -159,9 +171,11 @@ const vacancySlice = createSlice({
       FifthQuestion.fulfilled,
       (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        updateStateIfDifferent(
+        updateState(
           state,
-          action.payload.message,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
           state.chatBotDataOutput
         );
         state.isInputShow = false;

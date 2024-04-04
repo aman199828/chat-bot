@@ -1,10 +1,9 @@
 exports.PredefineQuestion = {
-  question: "What are you primarily looking for, from us?",
+  
   answer: ["Apply For Job", "Hire Dedicated Team"],
 };
 // Job Related Question
 exports.getVacancyTechnologies = {
-  question: "What specific technologies do you typically work",
   answer: [
     "Nodejs Developer",
     "React Developer",
@@ -14,21 +13,37 @@ exports.getVacancyTechnologies = {
   ],
 };
 exports.exprienceQuestions = {
-  question: "How many years of exprience do you have",
+  
   answer: ["Fresher", "1 Year", "2 Year", "Above 2 year"],
 };
 exports.trainingRelevantQuestions = {
-  question: "Have you completed any training relevant to this position?",
+
   answer: ["yes", "no"],
 };
 
 // Hire Dedicated team  Related Question
 exports.hireDedicatedTeamQuestions = {
-  question:
-    "Can you tell me a little more about what kind of expertise or technology you'll want to hire for your project?",
+  type: "textArea",
   placeHolder: "example Reactjs, MernStack Dev etc ",
   showTextArea: true,
+};
+exports.nextHireTeam = {
+  showTextArea: true,
+  type: "textArea",
+  placeHolder:"like full Details of project",
+  answer:[]
+};
+exports.endQuestions= {
+  answer:[]
+};
+exports.linkOption= {
+  answer:[]
+};
+exports.meetingQuestions= {
+  showCalander:true,
+  answer:["Yes","No"]
 };
 
 // Perfect!
 // Hello Aman, I see that you're interested in hiring a dedicated team with expertise in ReactJS. Could you please provide more details about the project requirements that will be handled by this team?
+// We value your feedback. Please provide your review and suggestions for areas where we can enhance our offering.

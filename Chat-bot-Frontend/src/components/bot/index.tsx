@@ -51,9 +51,9 @@ function Bot() {
   const [showMidLine, setShowMidLine] = useState(false);
   const [showEndLine, setShowEndLine] = useState(false);
   const [showloaderEnd, setShowLoadeEnd] = useState(false);
-  const { register, handleSubmit } = useForm<IFormInput>();
+  const { register, handleSubmit , reset} = useForm<IFormInput>();
   useEffect(() => {
-    if (isSuccess && !showContent) {
+    if (isSuccess) {
       const contentTimeout = setTimeout(() => {
         setshowContent(true);
         setShowLoaderMid(true);
@@ -61,10 +61,10 @@ function Bot() {
 
       return () => clearTimeout(contentTimeout);
     }
-  }, [isSuccess, showContent, previousChatData]);
+  }, [isSuccess]);
 
   useEffect(() => {
-    if (showContent && !showMidLine) {
+    if (showContent ) {
       const midLineTimeout = setTimeout(() => {
         setShowMidLine(true);
         setShowLoadeEnd(true);
@@ -72,7 +72,7 @@ function Bot() {
 
       return () => clearTimeout(midLineTimeout);
     }
-  }, [showContent, showMidLine, previousChatData]);
+  }, [showContent]);
 
   useEffect(() => {
     if (showMidLine && !showEndLine) {
@@ -81,7 +81,7 @@ function Bot() {
       }, 2000);
       return () => clearTimeout(endLineTimeout);
     }
-  }, [showMidLine, showEndLine, previousChatData]);
+  }, [showMidLine]);
 
   const dispatch = useAppDispatch();
   const handleGetStart = () => {
@@ -137,14 +137,49 @@ function Bot() {
   useEffect(() => {
     if (isSuccess) {
       handleScroll();
+      reset({email:"", textArea:""})
     }
   }, [isSuccess, previousChatData, showEndLine]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    const payload = {
-      email: data.email,
-    };
-    dispatch(UserInfoQuestion(payload));
+    if(data.email){
+      const question = {
+        role: "user",
+        content: data.email,
+        date: new Date().toLocaleTimeString(),
+      };
+      dispatch(vacancyActions.updatePreviousChat(question));
+      const payload = {
+        email: data.email,
+      };
+      dispatch(UserInfoQuestion(payload));
+    
+    }else if(isSecondQuestion){
+      const question = {
+        role: "user",
+        content: data.textArea,
+        date: new Date().toLocaleTimeString(),
+      };
+      dispatch(vacancyActions.updatePreviousChat(question));
+      const payload = {
+        userEmail: "aman.dhiman@ensuesoft.com",
+          selectedAnswer: data.textArea,
+      };
+      dispatch(SecondQuestion(payload));
+    }else if(isThirdQuestion){
+      const question = {
+        role: "user",
+        content: data.textArea,
+        date: new Date().toLocaleTimeString(),
+      };
+      dispatch(vacancyActions.updatePreviousChat(question));
+      const payload = {
+        userEmail: "aman.dhiman@ensuesoft.com",
+          selectedAnswer: data.textArea,
+      };
+      dispatch(ThirdQuestion(payload));
+    }
+    
   };
   return (
     <div>
@@ -296,7 +331,7 @@ function Bot() {
                   <div className="d-flex align-items-center justify-content-center px-4">
                     {!isInputShow && !isQuestionShow && (
                       <ul className="d-flex flex-column">
-                        {allQuestions &&
+                        {allQuestions && allQuestions.length > 0&&
                           allQuestions.map((question, index) => {
                             return (
                               <button
