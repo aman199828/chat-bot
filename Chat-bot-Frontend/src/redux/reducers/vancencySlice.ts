@@ -104,6 +104,7 @@ const vacancySlice = createSlice({
     builder.addCase(FirstQuestion.pending, (state) => {
       state.isLoading = true;
       state.isSuccess =false;
+      state.isInputShow =false
 
     });
     builder.addCase(
@@ -137,6 +138,7 @@ const vacancySlice = createSlice({
 
     builder.addCase(SecondQuestion.pending, (state) => {
       state.isLoading = true;
+      state.isInputShow=false
     });
     builder.addCase(
       SecondQuestion.fulfilled,
@@ -156,9 +158,9 @@ const vacancySlice = createSlice({
           action.payload.EndLine,
         )
         state.isLoading = false;
-        state.placeholder = action.payload.placeHolder;
-        state.inputType = action.payload.type;
-        state.isInputShow = action.payload.showTextArea;
+        state.placeholder = action.payload.nextQuestion.placeHolder;
+        state.inputType = action.payload.nextQuestion.type;
+        state.isInputShow = action.payload.nextQuestion.showTextArea;
         state.secondQuestion = false;
         state.thirdQuestion = true;
       }
@@ -187,7 +189,8 @@ const vacancySlice = createSlice({
           action.payload.EndLine,
         )
         state.allQuestions = action.payload.nextQuestion.answer;
-        state.isInputShow = false;
+        state.isInputShow = action.payload.nextQuestion.showUploadBox;
+        state.inputType = action.payload.nextQuestion.type;
         state.thirdQuestion = false;
         state.fourthQuestion = true;
       }

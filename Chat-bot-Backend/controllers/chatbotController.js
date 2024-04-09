@@ -69,8 +69,8 @@ const firstQuestion = async (req, res) => {
         response = {
           status: true,
           StartLine: "What specific technologies do you typically work",
-      MidLine: "",
-      EndLine: "",
+          MidLine: "",
+          EndLine: "",
           nextQuestion: getVacancyTechnologies,
         };
         break;
@@ -84,7 +84,9 @@ const firstQuestion = async (req, res) => {
           { $set: { hireDedicatedTeam: true } }
         );
         response = {
-          status: true,StartLine: "Can you tell me a little more about what kind of expertise or technology you'll want to hire for your project?",
+          status: true,
+          StartLine:
+            "Can you tell me a little more about what kind of expertise or technology you'll want to hire for your project?",
           MidLine: "",
           EndLine: "",
           nextQuestion: hireDedicatedTeamQuestions,
@@ -107,6 +109,7 @@ const SecondQuestion = async (req, res) => {
   try {
     const { userEmail, selectedAnswer } = req.body;
     const userInfo = await UserModal.findOne({ email: userEmail });
+
     if (userInfo.applyForJob) {
       await vancencyModal.updateOne(
         { email: userEmail },
@@ -116,7 +119,7 @@ const SecondQuestion = async (req, res) => {
         status: true,
         StartLine: "How many years of exprience do you have",
         MidLine: "",
-        EndLine:"",
+        EndLine: "",
         nextQuestion: exprienceQuestions,
       });
     } else if (userInfo.hireDedicatedTeam) {
@@ -128,8 +131,8 @@ const SecondQuestion = async (req, res) => {
         status: true,
         StartLine: " Perfect!",
         MidLine: `I see that you're interested in hiring a dedicated team with expertise in ${selectedAnswer}. Could you please provide more details about the project requirements that will be handled by this team? `,
-        EndLine:"",
-        nextQuestion:nextHireTeam,
+        EndLine: "",
+        nextQuestion: nextHireTeam,
       });
     } else {
       res.status(400).json({
@@ -156,9 +159,10 @@ const thirdQuestion = async (req, res) => {
       if (yearExp == "Fresher") {
         res.status(200).json({
           status: true,
-          StartLine: "Have you completed any training relevant to this position?",
-        MidLine: "",
-        EndLine:"",
+          StartLine:
+            "Have you completed any training relevant to this position?",
+          MidLine: "",
+          EndLine: "",
           nextQuestion: trainingRelevantQuestions,
         });
       } else {
@@ -166,10 +170,11 @@ const thirdQuestion = async (req, res) => {
         await sendMailMiddleware(userEmail, sendEmail, res);
         res.status(200).json({
           status: true,
-          StartLine: "Thank you for your time. Our HR team will be in touch with you shortly.",
-        MidLine: "",
-        EndLine:"",
-        nextQuestion: endQuestions,
+          StartLine:
+            "Thank you for your time. Our HR team will be in touch with you shortly.",
+          MidLine: "",
+          EndLine: "",
+          nextQuestion: endQuestions,
         });
       }
     } else if (userInfo.hireDedicatedTeam) {
@@ -179,14 +184,12 @@ const thirdQuestion = async (req, res) => {
       );
       res.status(200).json({
         status: true,
-        showDocument: true,
-        type: "textArea",
-        StartLine: " Perfect!",
+        StartLine: "Perfect!",
         MidLine:
           "Could you kindly provide the link to the demo website, Fegima, along with any other relevant documents?",
         EndLine:
           "Discover the innovative features of our demo website, accessible via the link provided below.",
-          nextQuestion:linkOption,
+        nextQuestion: linkOption,
       });
     } else {
       res.status(400).json({
@@ -216,9 +219,10 @@ const fourthQuestion = async (req, res) => {
       await sendMailMiddleware(email, sendEmail, userInfo.phoneNumber, res);
       res.status(200).json({
         status: true,
-        StartLine: "Thank you for your time. Our HR team will be in touch with you shortly.",
+        StartLine:
+          "Thank you for your time. Our HR team will be in touch with you shortly.",
         MidLine: "",
-        EndLine:"",
+        EndLine: "",
         nextQuestion: endQuestions,
       });
     } else if (userInfo.hireDedicatedTeam) {
@@ -233,8 +237,8 @@ const fourthQuestion = async (req, res) => {
         StartLine: "Perfect!",
         MidLine:
           "Would you like to schedule a meeting to discuss this further?",
-          EndLine:"",
-          nextQuestion: meetingQuestions,
+        EndLine: "",
+        nextQuestion: meetingQuestions,
       });
     } else {
       res.status(400).json({
@@ -268,9 +272,8 @@ const fifthQuestion = async (req, res) => {
         showReview: true,
         StartLine:
           "Thank you for your time. Our team will be in touch with you shortly",
-        MidLine:
-          "",
-          EndLine:"",
+        MidLine: "",
+        EndLine: "",
       });
     } else {
       res.status(400).json({

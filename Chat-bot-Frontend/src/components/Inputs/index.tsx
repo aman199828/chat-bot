@@ -13,8 +13,7 @@ interface registerType {
 export default function InputFields({ register }: registerType) {
   const inputType = useAppSelector(selectInputType);
 
-  const placeholder = useAppSelector(selectPlaceholder);
-  console.log(placeholder);
+  const placeholder = useAppSelector(selectPlaceholder);976
   return (
     <div className="form-row align-items-center">
       {inputType && inputType == "email" ? (
@@ -32,7 +31,7 @@ export default function InputFields({ register }: registerType) {
             </button>
           </div>
         </div>
-      ) : (
+      ) : inputType == "textArea" ? (
         <div className="form-row align-items-center p-3 col-10 mx-auto rounded-3 test-border">
           <div className="d-flex align-items-center justify-content-between gap-3">
             <textarea
@@ -48,7 +47,14 @@ export default function InputFields({ register }: registerType) {
             </button>
           </div>
         </div>
-      )}
+      ):( <div className="form-row align-items-center p-3 col-10 mx-auto rounded-3 test-border">
+      <div className="d-flex align-items-center justify-content-between gap-3">
+        
+        <button type="submit" className="btn btn-primary">
+          Submit
+        </button>
+      </div>
+    </div>)}
     </div>
   );
 }

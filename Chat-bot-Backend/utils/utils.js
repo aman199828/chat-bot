@@ -34,10 +34,13 @@ exports.nextHireTeam = {
   answer:[]
 };
 exports.endQuestions= {
-  answer:[]
+  answer:[],
+ 
 };
 exports.linkOption= {
-  answer:[]
+  answer:[],
+  type: "Document",
+  showUploadBox: true
 };
 exports.meetingQuestions= {
   showCalander:true,
