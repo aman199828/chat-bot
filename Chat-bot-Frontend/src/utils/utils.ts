@@ -24,4 +24,18 @@ const payload ={
       date: new Date().toLocaleTimeString(),
     });
   }
+
 };
+export const updateLiveChatState = (
+  state: VacancyStateModel,
+  startLine: string,
+  midLine: string,
+  endLine: string,
+) => {
+    state.liveChat.content = startLine;
+    state.liveChat.midLine = midLine;
+    state.liveChat.endLine = endLine
+    state.liveChat.date = new Date().toLocaleTimeString();
+    state.liveChat.role ="EnsuesoftBot";
+
+}

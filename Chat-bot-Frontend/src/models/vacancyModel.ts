@@ -17,6 +17,7 @@ export interface VacancyStateModel {
     midLine: string;
     endLine: string;
   }[];
+  liveChat: chatContent;
   chatBotDataOutput: {};
   isQuestionShow: boolean;
   isSuccess: boolean;
@@ -39,3 +40,17 @@ export type Van = [];
 export interface VacancyAllQuestionResponse {
   data: [];
 }
+export interface chatContent{
+  role: string;
+  content: string;
+  date: string;
+  midLine: string;
+  endLine: string;
+}
+export interface previousChatModel {
+  role: string;
+  content: string;
+  date: string;
+  midLine: string;
+  endLine: string;
+}[];

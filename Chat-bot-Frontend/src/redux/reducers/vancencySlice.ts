@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { VacancyStateModel } from "../../models/vacancyModel";
+import { VacancyStateModel, chatContent } from "../../models/vacancyModel";
 import {
   FifthQuestion,
   FirstQuestion,
@@ -10,7 +10,7 @@ import {
   SecondQuestion,
 } from "../thunks/vacancy";
 import { RootState } from "../store";
-import { updateState } from "../../utils/utils";
+import { updateLiveChatState, updateState } from "../../utils/utils";
 
 const initialState: VacancyStateModel = {
   isLoading: false,
@@ -23,6 +23,7 @@ const initialState: VacancyStateModel = {
   fifthQuestion: false,
   chatBotDataOutput: {},
   previousChat: [],
+  liveChat:{} as chatContent,
   isQuestionShow: false,
   isSuccess: false,
   placeholder: "",
@@ -53,10 +54,18 @@ const vacancySlice = createSlice({
           action.payload.EndLine,
           state.chatBotDataOutput
         );
+        updateLiveChatState(
+          state,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
+        )
         state.isInputShow = action.payload.showInput;
         state.isLoading = false;
         state.placeholder = action.payload.placeholder;
         state.inputType = action.payload.inputType;
+        
+        
       }
     );
     builder.addCase(getStarted.rejected, (state) => {
@@ -64,6 +73,7 @@ const vacancySlice = createSlice({
     });
     builder.addCase(UserInfoQuestion.pending, (state) => {
       state.isLoading = true;
+      state.isSuccess =false
     });
     builder.addCase(
       UserInfoQuestion.fulfilled,
@@ -77,18 +87,24 @@ const vacancySlice = createSlice({
           action.payload.EndLine,
           state.chatBotDataOutput
         );
+        updateLiveChatState(
+          state,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
+        )
         state.isInputShow = false;
         state.firstQuestion = true;
-        state.isSuccess = true;
       }
     );
     builder.addCase(UserInfoQuestion.rejected, (state) => {
+      state.isSuccess =false;
       state.isLoading = false;
-      state.isSuccess = false;
     });
     builder.addCase(FirstQuestion.pending, (state) => {
       state.isLoading = true;
-      state.isSuccess = false;
+      state.isSuccess =false;
+
     });
     builder.addCase(
       FirstQuestion.fulfilled,
@@ -101,8 +117,13 @@ const vacancySlice = createSlice({
           action.payload.EndLine,
           state.chatBotDataOutput
         );
+        updateLiveChatState(
+          state,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
+        )
         state.isLoading = false;
-        state.isSuccess = true;
         state.placeholder = action.payload.nextQuestion.placeHolder;
         state.inputType = action.payload.nextQuestion.type;
         state.isInputShow = action.payload.nextQuestion.showTextArea;
@@ -116,7 +137,6 @@ const vacancySlice = createSlice({
 
     builder.addCase(SecondQuestion.pending, (state) => {
       state.isLoading = true;
-      state.isSuccess = false;
     });
     builder.addCase(
       SecondQuestion.fulfilled,
@@ -129,8 +149,13 @@ const vacancySlice = createSlice({
           action.payload.EndLine,
           state.chatBotDataOutput
         );
+        updateLiveChatState(
+          state,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
+        )
         state.isLoading = false;
-        state.isSuccess = true;
         state.placeholder = action.payload.placeHolder;
         state.inputType = action.payload.type;
         state.isInputShow = action.payload.showTextArea;
@@ -155,6 +180,12 @@ const vacancySlice = createSlice({
           action.payload.EndLine,
           state.chatBotDataOutput
         );
+        updateLiveChatState(
+          state,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
+        )
         state.allQuestions = action.payload.nextQuestion.answer;
         state.isInputShow = false;
         state.thirdQuestion = false;
@@ -178,6 +209,12 @@ const vacancySlice = createSlice({
           action.payload.EndLine,
           state.chatBotDataOutput
         );
+        updateLiveChatState(
+          state,
+          action.payload.StartLine,
+          action.payload.MidLine,
+          action.payload.EndLine,
+        )
         state.isInputShow = false;
         state.thirdQuestion = false;
         state.fourthQuestion = false;
@@ -230,6 +267,9 @@ export const selectPlaceholder = (state: RootState) => {
 };
 export const selectInputType = (state: RootState) => {
   return state.vacancy.inputType;
+};
+export const selectLiveChatData = (state: RootState) => {
+  return state.vacancy.liveChat;
 };
 
 export const vacancyReducer = vacancySlice.reducer;

@@ -9,6 +9,7 @@ import {
   selectIsLoading,
   selectIsQuestionShow,
   selectIsSuccess,
+  selectLiveChatData,
   selectPreviousChat,
   selectSecondQuestion,
   selectThirdQuestion,
@@ -29,6 +30,7 @@ import image1 from "../../assets/ensuesoft-logo.svg";
 import Loader from "../loader";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { IFormInput } from "../../models/chatBotModel";
+import { previousChatModel } from "../../models/vacancyModel";
 
 function Bot() {
   const [isShowGptBox, setIsShowGptBox] = useState(false);
@@ -37,6 +39,7 @@ function Bot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isLoading = useAppSelector(selectIsLoading);
   const isSuccess = useAppSelector(selectIsSuccess);
+  const LiveChatData = useAppSelector(selectLiveChatData)
   const allQuestions = useAppSelector(selectAllQuestions);
   const isThirdQuestion = useAppSelector(selectThirdQuestion);
   const isFirstQuestion = useAppSelector(selectFirstQuestion);
@@ -48,12 +51,15 @@ function Bot() {
   const previousChatData = useAppSelector(selectPreviousChat);
   const [showLoaderMid, setShowLoaderMid] = useState(false);
   const [showContent, setshowContent] = useState(false);
+  const [showContentLoader, setshowContentLoader] = useState(false);
   const [showMidLine, setShowMidLine] = useState(false);
   const [showEndLine, setShowEndLine] = useState(false);
   const [showloaderEnd, setShowLoadeEnd] = useState(false);
   const { register, handleSubmit , reset} = useForm<IFormInput>();
   useEffect(() => {
     if (isSuccess) {
+      setShowLoadeEnd(false)
+      setshowContentLoader(true)
       const contentTimeout = setTimeout(() => {
         setshowContent(true);
         setShowLoaderMid(true);
@@ -61,10 +67,10 @@ function Bot() {
 
       return () => clearTimeout(contentTimeout);
     }
-  }, [isSuccess]);
-
+  }, [isSuccess, LiveChatData.content]);
   useEffect(() => {
     if (showContent ) {
+      setshowContentLoader(false)
       const midLineTimeout = setTimeout(() => {
         setShowMidLine(true);
         setShowLoadeEnd(true);
@@ -72,19 +78,23 @@ function Bot() {
 
       return () => clearTimeout(midLineTimeout);
     }
-  }, [showContent]);
+  }, [showContent, LiveChatData.midLine]);
 
   useEffect(() => {
-    if (showMidLine && !showEndLine) {
+    if (showMidLine ) {
+      setShowLoaderMid(false)
       const endLineTimeout = setTimeout(() => {
         setShowEndLine(true);
       }, 2000);
       return () => clearTimeout(endLineTimeout);
     }
-  }, [showMidLine]);
+  }, [showMidLine, LiveChatData.endLine]);
 
   const dispatch = useAppDispatch();
   const handleGetStart = () => {
+    setshowContent(false)
+      setShowMidLine(false)
+      setShowEndLine(false)
     if (!isStart) {
       setIsStart(true);
       dispatch(getStarted());
@@ -97,6 +107,9 @@ function Bot() {
         content: selectedAnswer,
         date: new Date().toLocaleTimeString(),
       };
+      setshowContent(false)
+      setShowMidLine(false)
+      setShowEndLine(false)
       dispatch(vacancyActions.updatePreviousChat(question));
       if (isFirstQuestion) {
         const payload = {
@@ -142,7 +155,11 @@ function Bot() {
   }, [isSuccess, previousChatData, showEndLine]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    setshowContent(false)
+    setShowMidLine(false)
+    setShowEndLine(false)
     if(data.email){
+     
       const question = {
         role: "user",
         content: data.email,
@@ -181,6 +198,14 @@ function Bot() {
     }
     
   };
+  const filteredConversation = previousChatData.filter((message :previousChatModel, index: number ,arr) => {
+      if (message.role === 'EnsuesoftBot') {
+        return index !== arr.length - 1;
+    }
+    return true;   
+});
+
+
   return (
     <div>
       {isShowGptBox ? (
@@ -238,8 +263,9 @@ function Bot() {
                   👋Click to Start
                 </button>
               </div>
-              {previousChatData &&
-                previousChatData.map((chatData, index) => {
+              {previousChatData &&filteredConversation &&
+                filteredConversation.map((chatData, index) => {
+                 
                   const isUser = chatData.role !== "EnsuesoftBot";
                   const messageClass = isUser
                     ? "bg-gray p-3 rounded-userMsg"
@@ -262,7 +288,6 @@ function Bot() {
                               : "w-75 text-start"
                           }
                         >
-                          {showContent ? (
                             <div className={messageClass}>
                               <div className="d-flex align-items-center justify-content-between mb-1">
                                 <h6
@@ -277,12 +302,7 @@ function Bot() {
                                 {chatData.content}
                               </p>
                             </div>
-                          ) : (
-                            <Loader />
-                          )}
-
-                          {showMidLine ? (
-                            chatData && chatData.endLine ? (
+                           { chatData && chatData.endLine ? (
                               <div className={`${messageClass} mt-2`}>
                                 <p className="mb-0 fs-14 word-break">
                                   {chatData.midLine}
@@ -291,11 +311,8 @@ function Bot() {
                             ) : (
                               ""
                             )
-                          ) : (
-                            showLoaderMid && <Loader />
-                          )}
-                          {showEndLine ? (
-                            chatData && chatData.endLine ? (
+                }
+                 {         chatData && chatData.endLine ? (
                               <div className={`${messageClass} mt-2`}>
                                 <p className="mb-0 fs-14 word-break">
                                   {chatData.endLine}
@@ -304,9 +321,7 @@ function Bot() {
                             ) : (
                               ""
                             )
-                          ) : (
-                            showloaderEnd && <Loader />
-                          )}
+              }
                           <p
                             className="fs-12 text-end mt-1"
                             id="page-bottom"
@@ -319,6 +334,63 @@ function Bot() {
                     </React.Fragment>
                   );
                 })}
+                <div className="d-flex align-items-end gap-3 m-1">
+                        {LiveChatData.role === "EnsuesoftBot" && (
+                          <img
+                            src="../static/logo.svg"
+                            alt="Logo"
+                            style={{ width: "60px" }}
+                          />
+                        )}
+                        <div
+                          className= "w-75 text-start"
+                          
+                        >
+                          {showContent ? (
+                            <div className="bg-primary-subtle p-3 rounded-chatgpt test">
+                              <div className="d-flex align-items-center justify-content-between mb-1">
+                                <h6
+                                  className="mb-0 fs-14 fw-bold "
+                                >
+                                  {LiveChatData.role}
+                                </h6>
+                              </div>
+                              <p className="mb-0 fs-14 word-break ">
+                                {LiveChatData.content}
+                              </p>
+                            </div>
+                          ) : (
+                            showContentLoader&&  <Loader />
+                          )}
+                           {    LiveChatData && LiveChatData.midLine && showMidLine ? (
+                              <div className="bg-primary-subtle p-3 rounded-chatgpt test mt-2">
+                                <p className="mb-0 fs-14 word-break">
+                                  {LiveChatData.midLine}
+                                </p>
+                              </div>
+                            ) : (
+                              LiveChatData && LiveChatData.midLine && showLoaderMid &&  <Loader/>
+                            )
+                }
+                 { LiveChatData && LiveChatData.endLine &&  showEndLine     ? (
+                              <div className="bg-primary-subtle p-3 rounded-chatgpt test mt-2">
+                                <p className="mb-0 fs-14 word-break">
+                                  {LiveChatData.endLine}
+                                </p>
+                              </div>
+                            ) : (
+                              LiveChatData &&   LiveChatData.endLine &&  showloaderEnd && <Loader/>
+                            )
+              }
+                          <p
+                            className="fs-12 text-end mt-1"
+                            id="page-bottom"
+                            ref={lastResultRef}
+                          >
+                            {LiveChatData.date}
+                          </p>
+                        </div>
+                      </div>
               {isInputShow && showEndLine && (
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <InputFields register={register} />
@@ -329,7 +401,7 @@ function Bot() {
               ) : (
                 <div className="py-3 d-flex flex-column gap-4 align-items-end">
                   <div className="d-flex align-items-center justify-content-center px-4">
-                    {!isInputShow && !isQuestionShow && (
+                    {!isInputShow && !isQuestionShow && showContent && showMidLine && showEndLine && (
                       <ul className="d-flex flex-column">
                         {allQuestions && allQuestions.length > 0&&
                           allQuestions.map((question, index) => {
