@@ -107,3 +107,18 @@ export const FifthQuestion = createAsyncThunk(
     }
   }
 );
+export const UploadFile = createAsyncThunk(
+  "api/UploadFile",
+  async (payload: unknown, thunkAPI) => {
+    try {
+      const response: any = await axios.post(
+        "http://localhost:3030/chatbot/uploadFile",
+        payload
+      );
+
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);

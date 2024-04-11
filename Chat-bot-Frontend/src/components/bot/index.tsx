@@ -56,33 +56,30 @@ function Bot() {
   const [showEndLine, setShowEndLine] = useState(false);
   const [showloaderEnd, setShowLoaderEnd] = useState(false);
   const { register, handleSubmit, reset } = useForm<IFormInput>();
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (isSuccess) {
-      setShowLoaderEnd(false);
       setshowContentLoader(true);
       const contentTimeout = setTimeout(() => {
         setshowContent(true);
-        setShowLoaderMid(true);
       }, 2000);
-
       return () => clearTimeout(contentTimeout);
     }
   }, [isSuccess, LiveChatData.content]);
   useEffect(() => {
     if (showContent && LiveChatData.midLine) {
-      setshowContentLoader(false);
+      setShowLoaderMid(true);
       const midLineTimeout = setTimeout(() => {
         setShowMidLine(true);
-        setShowLoaderEnd(true);
       }, 2000);
 
       return () => clearTimeout(midLineTimeout);
     }
-  }, [showContent, LiveChatData.midLine]);
+  }, [showContent]);
 
   useEffect(() => {
     if (showMidLine && LiveChatData.endLine) {
-      setShowLoaderMid(false);
+      setShowLoaderEnd(true);
       const endLineTimeout = setTimeout(() => {
         setShowEndLine(true);
       }, 2000);
@@ -90,7 +87,6 @@ function Bot() {
     }
   }, [showMidLine, LiveChatData.endLine]);
 
-  const dispatch = useAppDispatch();
   const handleGetStart = () => {
     setshowContent(false);
     setShowMidLine(false);
@@ -107,6 +103,9 @@ function Bot() {
         content: selectedAnswer,
         date: new Date().toLocaleTimeString(),
       };
+      setshowContentLoader(false);
+      setShowLoaderMid(false);
+      setShowLoaderEnd(false);
       setshowContent(false);
       setShowMidLine(false);
       setShowEndLine(false);
@@ -155,6 +154,9 @@ function Bot() {
   }, [isSuccess, previousChatData, showContent, showMidLine, showEndLine]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    setshowContentLoader(false);
+    setShowLoaderMid(false);
+    setShowLoaderEnd(false);
     setshowContent(false);
     setShowMidLine(false);
     setShowEndLine(false);
@@ -384,7 +386,19 @@ function Bot() {
                   </p>
                 </div>
               </div>
-              {isInputShow && showContent && (
+              {isInputShow && showContent && showMidLine && showEndLine && (
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <InputFields register={register} />
+                </form>
+              )}
+
+              {isInputShow && showContent && showMidLine && !showEndLine && (
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <InputFields register={register} />
+                </form>
+              )}
+
+              {isInputShow && showContent && !showMidLine && !showEndLine && (
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <InputFields register={register} />
                 </form>

@@ -8,6 +8,7 @@ import {
   ThirdQuestion,
   getStarted,
   SecondQuestion,
+  UploadFile,
 } from "../thunks/vacancy";
 import { RootState } from "../store";
 import { updateLiveChatState, updateState } from "../../utils/utils";
@@ -23,14 +24,14 @@ const initialState: VacancyStateModel = {
   fifthQuestion: false,
   chatBotDataOutput: {},
   previousChat: [],
-  liveChat:{} as chatContent,
+  liveChat: {} as chatContent,
   isQuestionShow: false,
   isSuccess: false,
   placeholder: "",
   inputType: "",
-  showStartLine:false,
-  showMidLine:false,
-  showEndLine:false,
+  showStartLine: false,
+  showMidLine: false,
+  showEndLine: false,
 };
 const vacancySlice = createSlice({
   name: "vacancy",
@@ -58,14 +59,12 @@ const vacancySlice = createSlice({
           state,
           action.payload.StartLine,
           action.payload.MidLine,
-          action.payload.EndLine,
-        )
+          action.payload.EndLine
+        );
         state.isInputShow = action.payload.showInput;
         state.isLoading = false;
         state.placeholder = action.payload.placeholder;
         state.inputType = action.payload.inputType;
-        
-        
       }
     );
     builder.addCase(getStarted.rejected, (state) => {
@@ -73,7 +72,7 @@ const vacancySlice = createSlice({
     });
     builder.addCase(UserInfoQuestion.pending, (state) => {
       state.isLoading = true;
-      state.isSuccess =false
+      state.isSuccess = false;
     });
     builder.addCase(
       UserInfoQuestion.fulfilled,
@@ -91,21 +90,20 @@ const vacancySlice = createSlice({
           state,
           action.payload.StartLine,
           action.payload.MidLine,
-          action.payload.EndLine,
-        )
+          action.payload.EndLine
+        );
         state.isInputShow = false;
         state.firstQuestion = true;
       }
     );
     builder.addCase(UserInfoQuestion.rejected, (state) => {
-      state.isSuccess =false;
+      state.isSuccess = false;
       state.isLoading = false;
     });
     builder.addCase(FirstQuestion.pending, (state) => {
       state.isLoading = true;
-      state.isSuccess =false;
-      state.isInputShow =false
-
+      state.isSuccess = false;
+      state.isInputShow = false;
     });
     builder.addCase(
       FirstQuestion.fulfilled,
@@ -122,8 +120,8 @@ const vacancySlice = createSlice({
           state,
           action.payload.StartLine,
           action.payload.MidLine,
-          action.payload.EndLine,
-        )
+          action.payload.EndLine
+        );
         state.isLoading = false;
         state.placeholder = action.payload.nextQuestion.placeHolder;
         state.inputType = action.payload.nextQuestion.type;
@@ -138,7 +136,7 @@ const vacancySlice = createSlice({
 
     builder.addCase(SecondQuestion.pending, (state) => {
       state.isLoading = true;
-      state.isInputShow=false
+      state.isInputShow = false;
     });
     builder.addCase(
       SecondQuestion.fulfilled,
@@ -155,8 +153,8 @@ const vacancySlice = createSlice({
           state,
           action.payload.StartLine,
           action.payload.MidLine,
-          action.payload.EndLine,
-        )
+          action.payload.EndLine
+        );
         state.isLoading = false;
         state.placeholder = action.payload.nextQuestion.placeHolder;
         state.inputType = action.payload.nextQuestion.type;
@@ -186,8 +184,8 @@ const vacancySlice = createSlice({
           state,
           action.payload.StartLine,
           action.payload.MidLine,
-          action.payload.EndLine,
-        )
+          action.payload.EndLine
+        );
         state.allQuestions = action.payload.nextQuestion.answer;
         state.isInputShow = action.payload.nextQuestion.showUploadBox;
         state.inputType = action.payload.nextQuestion.type;
@@ -216,8 +214,8 @@ const vacancySlice = createSlice({
           state,
           action.payload.StartLine,
           action.payload.MidLine,
-          action.payload.EndLine,
-        )
+          action.payload.EndLine
+        );
         state.isInputShow = false;
         state.thirdQuestion = false;
         state.fourthQuestion = false;
@@ -226,6 +224,19 @@ const vacancySlice = createSlice({
       }
     );
     builder.addCase(FifthQuestion.rejected, (state) => {
+      state.isLoading = false;
+    });
+    builder.addCase(UploadFile.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(
+      UploadFile.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        state.isLoading = false;
+        console.log(action.payload);
+      }
+    );
+    builder.addCase(UploadFile.rejected, (state) => {
       state.isLoading = false;
     });
   },
