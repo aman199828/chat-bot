@@ -57,6 +57,8 @@ function Bot() {
   const [showloaderEnd, setShowLoaderEnd] = useState(false);
   const { register, handleSubmit, reset } = useForm<IFormInput>();
   const dispatch = useAppDispatch();
+  console.log(LiveChatData);
+
   useEffect(() => {
     if (isSuccess) {
       setshowContentLoader(true);
@@ -205,6 +207,7 @@ function Bot() {
       return true;
     }
   );
+  console.log(isInputShow, showContent, showMidLine, showEndLine);
 
   return (
     <div>
@@ -386,23 +389,17 @@ function Bot() {
                   </p>
                 </div>
               </div>
-              {isInputShow && showContent && showMidLine && showEndLine && (
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <InputFields register={register} />
-                </form>
-              )}
-
-              {isInputShow && showContent && showMidLine && !showEndLine && (
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <InputFields register={register} />
-                </form>
-              )}
-
-              {isInputShow && showContent && !showMidLine && !showEndLine && (
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <InputFields register={register} />
-                </form>
-              )}
+              <form onSubmit={handleSubmit(onSubmit)}>
+                {/* {isInputShow && showContent ? (
+                  showMidLine ? (
+                    showEndLine && <InputFields register={register} />
+                  ) : (
+                    <InputFields register={register} />
+                  )
+                ) : (
+                  ""
+                )} */}
+              </form>
               {!isInputShow && !isQuestionShow && showContent && (
                 <div className="py-3 d-flex flex-column gap-4 align-items-end">
                   <div className="d-flex align-items-center justify-content-center px-4">
